@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#997619</color>
+    <color name="colorPrimaryDark">#503d14</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <!-- . -->
+    <color name="colorblanco">#FFFFFF</color>
+    <color name="colornegro">#242424</color>
+    <color name="colordorado">#997619</color>
+    <color name="colordorado2">#503d14</color>
+    <color name="colorcrema">#EFE2C6</color>
+    <color name="colorcremaparatitulo"> #F4E5C1</color>
+    <color name="colorplomo">#424242</color>
+    <color name="colorplomo2">#eaeaee</color>
+    <color name="colorplomo3">#ececf0</color>
+
+
+
+    <color name="darkGreen">#438B49</color>
+    <color name="lightGreen">#8BC34A</color>
+</resources>

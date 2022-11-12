@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Opciones_Admin">
+        <item>Seleccione</item>
+        <item>1. Cliente</item>
+        <item>2. Operador</item>
+        <item>3. Administrador</item>
+
+    </string-array>
+
+</resources>

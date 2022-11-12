@@ -1,0 +1,210 @@
+<resources>
+    <string name="app_name">Byloche</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="Bienvenido">!Bienvenido a BylocheApp¡</string>
+    <string name="Bienvenido_after">Para comenzar selecciona la hora y el lugar en donde quieres recibir tu pedido</string>
+    <string name="Texto1">Escoge tu categoria de comida</string>
+
+    <string name="titulo">¡BylocheApp!</string>
+    <string name="titulo2">!Byloche!</string>
+
+    <!--  WEB  -->
+    <!--Web Api SqlServer-->
+    <string name="ip">http://192.168.100.95:9092</string>
+    <string name="rutaImagenes">http://192.168.100.95:9090</string>
+
+    <string name="ip2">http://192.168.100.127:9092</string>
+
+    <!--Web Api MySql-->
+    <string name="ip3">https://menubyloche.000webhostapp.com</string>
+    <string name="ip4">http://192.168.100.112:8080/byloche_app</string>
+
+
+
+    <!-- Linear Layout home -->
+    <string name="t1">Papas</string>
+    <string name="t2">Hamburguesas</string>
+    <string name="t3">Hotdogs</string>
+    <string name="t4">Submarinos</string>
+    <string name="t5">Tacos</string>
+
+    <!-- Comment Frames -->
+    <string name="tcoment_titulo">Rankea y comenta</string>
+    <string name="tcoment_info">Pagina en contruccion</string>
+    <string name="tcoment3">Hot Dog</string>
+    <string name="tcoment4">Salchipapa</string>
+    <string name="tcoment5">Submarino</string>
+    <string name="tcoment6">Taco</string>
+
+    <!-- Perfil Frames -->
+
+    <string name="tperfil1">Cerrar sesión</string>
+    <string name="tperfil2">Contraseña</string>
+    <string name="tperfil3">Iniciar Sesión</string>
+    <string name="tperfil4">¿No tienes cuenta?</string>
+    <string name="tperfil5">Registrate</string>
+
+
+    <!-- Information Frames -->
+
+    <string name="Tinfo1">Contactanos</string>}
+    <string name="Tinfo2">Ubicados</string>
+    <string name="Tinfo3">38 entre Vacas Galindo - Bolivia</string>
+    <string name="Tinfo4"></string>
+    <string name="Tinfo5"></string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+
+    <!-- Login Activity   -->
+    <string name="lo_email">Ingrese su Email</string>
+    <string name="lo_password">Ingrese su contraseña</string>
+    <string name="lo_boton">Acceder</string>
+    <string name="lo_recordar">Recordar</string>
+    <string name="lo_text">Inicio de Sesión</string>
+
+    <!-- REGITER ACTIVITY -->
+    <string name="re_text">Usuario nuevo</string>
+    <string name="re_Nombre">Nombre</string>
+    <string name="re_Apellido">Apellido</string>
+    <string name="re_email">Email</string>
+    <string name="re_password">Contraseña</string>
+    <string name="re_confirassword">Confirmar Contraseña</string>
+    <string name="re_boton">Registrar</string>
+    <string name="re_telefono">Teléfono </string>
+    <string name="re_text2">¿Ya tienes cuenta?</string>
+    <string name="re_text3">Inicia Sesión</string>
+
+    <!-- CARRITO ACTIVITY -->
+    <string name="ca_titulo">Tu carrito</string>
+    <string name="ca_vaciar">Vaciar</string>
+    <string name="ca_vacio2">Tu carrito está vacío</string>
+    <string name="ca_texto">Revisa nuestro menu y añade tu platos para continuar</string>
+
+    <!-- FRAGMENTS PERFIL-->
+
+    <!-- Cuenta -->
+    <string name="cf_titulo">DATOS PERSONALES</string>
+    <string name="cf_nombre">Nombre</string>
+    <string name="cf_apellido">Apellido</string>
+    <string name="cf_email">E-mail</string>
+    <string name="cf_celular">Teléfono</string>
+    <string name="cf_datos">EDITAR MI CUENTA</string>
+    <string name="cf_Contraseña">Actualizar contraseña</string>
+    <string name="cf_passact">Contraseña actual</string>
+    <string name="cf_passnueva">Contraseña nueva</string>
+    <string name="cf_passconfir">Confirmar Contraseña</string>
+
+    <!-- Mis Direcciones -->
+
+    <string name="di_titulo">DIRECCION DE ENTREGA</string>
+    <string name="di_nuevo">Agregar nueva Dirección</string>
+    <string name="di_midireccion">Mis direcciones</string>
+
+    <!--TERMINOS LEGALES -->
+    <string name="termi_titulo">Términos Legales</string>
+
+    <!-- Privilegios -->
+    <string name="privi_titulo">GESTIÓN DE USUARIO</string>
+    <string name="privi_registrar">Registrar un </string>
+    <string name="privi_btnregist">Empleado</string>
+    <string name="privi_elejir">Dar prioridad</string>
+    <string name="privi_btnbuscar">Buscar</string>
+    <string name="privi_btnmodificar">Modificar</string>
+    <string name="privi_modificar">Modificar Usuario</string>
+    <string name="privi_email">E-mail</string>
+    <string name="privi_txt">TEXTO</string>
+
+    <!-- Agregar Categorias -->
+    <string name="catego_titulo">AGREGAR CATEGORÍA</string>
+    <string name="catego_nombre">Nombre de la cateogoria </string>
+    <string name="catego_nombre2">Cateogoria </string>
+    <string name="catego_descripcion">Escriba una descripcion </string>
+    <string name="catego_descripcion2">Descripcion </string>
+    <string name="catego_imagen">Ingresar imagen</string>
+
+    <!-- Agregar un Producto -->
+    <string name="product_titulo">AGREGAR UN PRODUCTO</string>
+    <string name="product_nombre">Nombre del producto</string>
+    <string name="product_nombre2">Producto</string>
+    <string name="product_descripcion">Escriba una descripcion</string>
+    <string name="product_descripcion2">Descripcion</string>
+    <string name="product_precio">Precio del producto</string>
+    <string name="product_precio2">Precio</string>
+    <string name="product_categoria">Categoria a la que pertenece</string>
+    <string name="product_cateogoria2">Categoria</string>
+    <string name="product_disponible">Producto disponible</string>
+    <string name="producto_dis1">Si</string>
+    <string name="producto_dis2">No</string>
+    <string name="product_imagen">Ingresar imagen</string>
+    <string name="product_"></string>
+
+    <!-- Caja -->
+    <string name="ca_cancelar">Cancelar</string>
+    <string name="ca_Caja">Caja</string>
+    <string name="ca_txt1">Dirección de envío</string>
+    <string name="ca_txt2">Completar tu dirección</string>
+    <string name="ca_txt3">¿Guardar otra dirección?</string>
+    <string name="ca_txt4">Datos del cliente</string>
+    <string name="ca_txt5">Agregar datos de cliente</string>
+    <string name="ca_txt6">Método de pago</string>
+    <string name="ca_txt7">Solo Efectivo</string>
+    <string name="ca_txt8">Pagar con el valor exacto</string>
+    <string name="ca_txt9">Agregar un comentario a este pedido</string>ç
+    <string name="ca_txt10">Subtotal a pagar: </string>
+    <string name="ca_txt11">Costo de envio: </string>
+    <string name="ca_txt12">Agrega un comentario a este pedido</string>
+    <string name="ca_txt13">He leído y estoy de acuerdo con: Términos y condiciones y Políticas de privacidad</string>
+    <string name="ca_txt14">Escribe un comentario…</string>
+    <string name="ca_txtej">Ej: 10, 20, 50</string>
+    <string name="ca_txt15">Nombre:</string>
+    <string name="ca_txt16">Telefono:</string>
+
+    <!-- DIRECCION ACTIVITY -->
+
+    <string name="diract_nombre">Nombre/Alias</string>
+    <string name="diract_Direccion">Calle principal</string>
+    <string name="diract_calle2">Calle secundaria</string>
+    <string name="diract_referencia">Referencia</string>
+    <string name="diract_tipovivienda">Tipo de Vivienda</string>
+    <string name="diract_ejemtipo">Ej: casa, local comercial, hotel, etc.</string>
+    <string name="diract_adicional">Datos adicionales de la vivienda</string>
+    <string name="diract_telefono">Teléfono</string>
+    <string name="diract_ejemadicional">Ej: Color de casa, pisos, etc.</string>
+    <string name="diract_btncancelar">Cancelar</string>
+    <string name="diract_btnguardar">Guardar</string>
+
+    <!-- DATOS DE FACTURACION -->
+
+    <string name="fact_dat_titulo">Mis datos de facturación</string>
+    <string name="fact_dat_tipo">Tipo de identificaión</string>
+    <string name="fact_dat_doc">Número de documento</string>
+    <string name="fact_dat_nombre">Nombre y Apellido</string>
+    <string name="fact_dat_telefono">Teléfono</string>
+    <string name="fact_dat_email">E-mail</string>
+    <string name="fact_dat_direccion">Dirécción</string>
+
+
+    <string-array name="listaconfig">
+        <item>Mi cuenta</item>
+        <item>Direcciones</item>
+        <item>Mis Pedidos</item>
+        <item>Configuracion</item>
+        <item>Notificaciones</item>
+        <item>Términos legales</item>
+        <item>Ayuda</item>
+    </string-array>
+
+
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="listaconfig2">
+        <item>Mi cuenta</item>
+        <item>Direcciones</item>
+        <item>Mis Pedidos</item>
+        <item>Configuracion</item>
+        <item>Notificaciones</item>
+        <item>Términos legales</item>
+        <item>Ayuda</item>
+    </string-array>
+
+</resources>

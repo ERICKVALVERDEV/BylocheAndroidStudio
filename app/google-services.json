@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "640957742036",
+    "firebase_url": "https://bylocheapp.firebaseio.com",
+    "project_id": "bylocheapp",
+    "storage_bucket": "bylocheapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640957742036:android:f03307ff2054e0f0af3441",
+        "android_client_info": {
+          "package_name": "com.valverde.byloche"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640957742036-88oo6m9c6mnfokidn1okj9ov2bsoqve3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.valverde.byloche",
+            "certificate_hash": "4f34b1ad027100bd99bcca74a02eca8b0d9cddab"
+          }
+        },
+        {
+          "client_id": "640957742036-gj8sinfgpvo7n7o1qb10ffsksoe1m8kh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZWe3h1gJVaRlKmcaQJEvw4Xoagyt8Kq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640957742036-gj8sinfgpvo7n7o1qb10ffsksoe1m8kh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
