@@ -5,16 +5,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import com.valverde.byloche.Datos.usu_producto;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
@@ -22,23 +21,27 @@ import com.valverde.byloche.SQLite.Utilidades;
 
 import java.util.ArrayList;
 
-public class CuadroDialogoPro extends Dialog {
+public class CuadroDialogoProCarrito extends Dialog {
 
-   ProductoActivity pasardatos;
-   Context context;
-    ConexionSQLiteHelper con = new ConexionSQLiteHelper(CuadroDialogoPro.super.getContext(),"bd_registar_pro",null,1);
+    ProductoActivity pasardatos;
+    Context context;
+    ConexionSQLiteHelper con = new ConexionSQLiteHelper(CuadroDialogoProCarrito.super.getContext(),"bd_registar_pro",null,1);
+    int foco1, foco2;
+    int valor;
     final EditText paso;
     public  interface FinalizoDialogo {
-
         void ResultCuadroDialogo(String paso);
+        void ResltValor(int[] valor);
     }
 
     private FinalizoDialogo interfaz;
 
     @SuppressLint("SetTextI18n")
-    public CuadroDialogoPro(final Context context, FinalizoDialogo actividad) {
+    public CuadroDialogoProCarrito(final Context context, FinalizoDialogo actividad) {
         super(context);
+
         interfaz = actividad;
+        //CarritoActivity.adapter.notifyDataSetChanged();
 
         final Dialog dialogo = new Dialog(context);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -57,46 +60,31 @@ public class CuadroDialogoPro extends Dialog {
         ImageView cerrar = dialogo.findViewById(R.id.btn_cerrar);
         ImageView imgproduct = dialogo.findViewById(R.id.img_producto);
 
-
-            //ESTOS PARAMETRO FUERON DECLARADOS EN PRODUCTOACTIVITY
         String ip = context.getString(R.string.rutaImagenes);
-            Picasso.get().load(ip+ProductoActivity.setRutaImagen).into(imgproduct);
-            titulo.setText(ProductoActivity.setNombre_pro + " ");
-            precio.setText("$"+ ProductoActivity.setprecio);
+            Picasso.get().load(ip+CarritoActivity.RutaImagen).into(imgproduct);
+            titulo.setText(CarritoActivity.setNombre_pro + " ");
+            precio.setText("$"+ String.valueOf(CarritoActivity.setprecio));
 
 
-       // Toast.makeText(context, String.valueOf(ProductoActivity.setIdProducto), Toast.LENGTH_SHORT).show();
-
-        int valor = 1;
-        paso.setText("1");
+        final int[] valor = {1};
+        paso.setText(String.valueOf(CarritoActivity.setCantidad));
 
         mas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int m = Integer.parseInt(paso.getText().toString());
-                if(m >= 10){
-                    Snackbar.make(dialogo.findViewById(R.id.Cuadro_Dialogo_id),"Solo 10 productos por pedido", Snackbar.LENGTH_SHORT).show();
-                   // Toast.makeText(context, "Solo 10 productos por pedido", Toast.LENGTH_SHORT).show();
-                }else{
                     m++;
                     paso.setText(String.valueOf(m));
-                }
-
-
             }
         });
         menos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int m = Integer.parseInt(paso.getText().toString());
-                if(m <= 1){
-                    //Toast.makeText(context, "Solo 5 productos por pedido", Toast.LENGTH_SHORT).show();
-                }else{
+                if(m >= 1){
                     m--;
                     paso.setText(String.valueOf(m));
                 }
-
-
             }
         });
 
@@ -106,56 +94,48 @@ public class CuadroDialogoPro extends Dialog {
                 dialogo.dismiss();
             }
         });
-
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 interfaz.ResultCuadroDialogo(paso.getText().toString());
-                if(Integer.parseInt(paso.getText().toString()) <= 10) {
-                    existeConsulta();
-                    ProductoActivity.img_carrito.setImageResource(R.drawable.logo4);
-                    dialogo.dismiss();
-                }else{
-                    Snackbar.make(dialogo.findViewById(R.id.Cuadro_Dialogo_id),"Solo 10 productos por pedido", Snackbar.LENGTH_SHORT).show();
-                    paso.setText("10");
-                }
 
+                ExisteConsulta();
+                ProductoActivity.img_carrito.setImageResource(R.drawable.logo4);
+                CarritoActivity.adapter3.notifyDataSetChanged();
+                valor[0] = 1;
+                dialogo.dismiss();
+
+                interfaz.ResltValor(valor);
             }
         });
-
         dialogo.show();
-
     }
     private void ModificarCant() {
-        // UPDATE `producto` SET `tot_pro` = '1512' WHERE `producto`.`id_pro` = 1;
         try {
-           SQLiteDatabase db = con.getWritableDatabase();
+            SQLiteDatabase db = con.getWritableDatabase();
 
             String alter = "UPDATE " + Utilidades.TABLA_PEDIDO + " SET " + Utilidades.CAMPO_CANTIDAD_PRO + " = "
-                    +paso.getText().toString()+" WHERE " + Utilidades.CAMPO_ID_PRODUCTO + " = "+ProductoActivity.setIdProducto;
+                    +paso.getText().toString()+" WHERE " + Utilidades.CAMPO_ID_PRODUCTO + " = "+CarritoActivity.setIdProducto;
             db.execSQL(alter);
             db.close();
-        } catch (Exception e) {
-            Toast.makeText(CuadroDialogoPro.super.getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        } catch (Exception ex) {
+            Toast.makeText(CuadroDialogoProCarrito.super.getContext(), ex.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void RegistarProducto(){
-        //Toast.makeText(ProductoActivity.this, "sdfdfdfds3333d", Toast.LENGTH_SHORT).show();
         try {
-                       SQLiteDatabase db = con.getWritableDatabase();
+            SQLiteDatabase db = con.getWritableDatabase();
 
-            //INSERT INTO detalle_carro (id, producto, id_usuario, nombre_pro, cantidad_pro, precio_pro values ();
-            //RECORDAR QUE LOS PARAMETROS DE VALUES PROVIENEN DE LA ACTIVIDAD PRODUCTO
             String insert = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
                     +","+Utilidades.CAMPO_ID_CATEGORIA+","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO+","+Utilidades.CAMPO_RUTA_IMAGEN+" )VALUES ("
-                    + ProductoActivity.setIdProducto+","
-                    +ProductoActivity.setIdUsuario+","
-                    +ProductoActivity.setCategoria+",'"
-                    +ProductoActivity.setNombre_pro+"',"
+                    + CarritoActivity.setIdProducto+","
+                    +CarritoActivity.setIdUsuario+","
+                    +CarritoActivity.setCategoria+",'"
+                    +CarritoActivity.setNombre_pro+"',"
                     +paso.getText().toString()
-                    +","+ProductoActivity.setprecio+",'"
-                    +ProductoActivity.setRutaImagen+"')";
+                    +","+CarritoActivity.setprecio+",'"
+                    +CarritoActivity.RutaImagen+"')";
 
             String insert2 = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
                     +","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO
@@ -169,27 +149,28 @@ public class CuadroDialogoPro extends Dialog {
         }
     }
 
-
-
-private void existeConsulta(){
+    private void ExisteConsulta(){
         SQLiteDatabase db = con.getReadableDatabase();
-        String[] parametro = {ProductoActivity.setNombre_pro};
+        String parametro = String.valueOf(ProductoActivity.setIdProducto);
         try {
-            Cursor cursor = db.rawQuery("SELECT "+Utilidades.CAMPO_NOMBRE_PRO+" from "+Utilidades
-            .TABLA_PEDIDO+" WHERE "+Utilidades.CAMPO_NOMBRE_PRO+" =? ", parametro);
-            cursor.moveToFirst();
-            String getnombre_pro = cursor.getString(0);
-           // Toast.makeText(CuadroDialogoPro.super.getContext(), getnombre_pro, Toast.LENGTH_SHORT).show();
-            if(ProductoActivity.setNombre_pro != getnombre_pro){
-                ModificarCant();
+            Cursor cursor = db.rawQuery("SELECT " + Utilidades.CAMPO_ID_PRODUCTO + " from " + Utilidades
+                    .TABLA_PEDIDO + " WHERE " + Utilidades.CAMPO_ID_PRODUCTO + " = " + parametro, null);
+            int idProducto = 0;
+            if(!(cursor.getCount() == 0)){
+                while (cursor.moveToNext()){
+                    idProducto = cursor.getInt(0);
+                }
+                if(ProductoActivity.setIdProducto == idProducto){
+                    ModificarCant();
+                }
+            }else{
+                RegistarProducto();
             }
+
         }catch (Exception e){
-            //AQUI REGISTRO LA CONSULTA Y APROVECHO EL ERROR
-            RegistarProducto();
+            Log.d("Salida","" + e.getMessage());
         }
-}
-
-
+    }
 
 
 }

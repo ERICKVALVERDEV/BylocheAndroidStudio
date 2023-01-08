@@ -1,7 +1,6 @@
 package com.valverde.byloche.adaptadores;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,19 +8,14 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.squareup.picasso.Picasso;
 import com.valverde.byloche.Datos.usu_producto;
 import com.valverde.byloche.R;
-import com.valverde.byloche.entidades.VolleySingleton;
 
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class adapter_recyclerview extends RecyclerView.Adapter<adapter_recyclerview.MyViewHolder> implements  View.OnClickListener {
     //GETCONTEXT 

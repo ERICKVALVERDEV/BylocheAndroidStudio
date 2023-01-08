@@ -1,15 +1,10 @@
 package com.valverde.byloche.fragments;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.ContentFrameLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,16 +24,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.loopj.android.http.AsyncHttpClient;
 import com.valverde.byloche.Datos.usu_producto;
-import com.valverde.byloche.Interfaz.iComunicateFragments;
 import com.valverde.byloche.R;
 import com.valverde.byloche.adaptadores.adapter_recyclerview;
-import com.valverde.byloche.entidades.VolleySingleton;
+import com.valverde.byloche.Interfaz.entidades.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.valverde.byloche.fragments.HomeFragment;
 
 import java.util.ArrayList;
 

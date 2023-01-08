@@ -5,6 +5,9 @@
     <color name="colorAccent">#03DAC5</color>
 
     <!-- . -->
+    <color name="colorPrimaryApp">#f0f0ef</color>
+    <color name="colorBarraApp">#fcb008</color>
+    <color name="colorBotton">#F4CD79</color>
     <color name="colorblanco">#FFFFFF</color>
     <color name="colornegro">#242424</color>
     <color name="colordorado">#997619</color>
@@ -14,6 +17,7 @@
     <color name="colorplomo">#424242</color>
     <color name="colorplomo2">#eaeaee</color>
     <color name="colorplomo3">#ececf0</color>
+    <color name="colorRojo">#E91E63</color>
 
 
 

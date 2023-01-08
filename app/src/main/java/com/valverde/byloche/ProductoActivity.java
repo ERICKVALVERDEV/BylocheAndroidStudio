@@ -1,52 +1,37 @@
 package com.valverde.byloche;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ViewUtils;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import static br.com.zbra.androidlinq.Linq.stream;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.util.Util;
-import com.google.android.material.snackbar.Snackbar;
 import com.loopj.android.http.AsyncHttpClient;
 import com.valverde.byloche.Datos.Sqlite_Detalle_Carrito;
 import com.valverde.byloche.Datos.usu_producto;
 import com.valverde.byloche.Interfaz.iRestApi;
-import com.valverde.byloche.Online.CategoriaOnline;
 import com.valverde.byloche.Online.MenuOnline;
+import com.valverde.byloche.Online.RetrofitCall;
+import com.valverde.byloche.Online.UsuarioLogin;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
 import com.valverde.byloche.adaptadores.adapter_recyclerview;
-import com.valverde.byloche.entidades.VolleySingleton;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.valverde.byloche.fragments.ProductoFragment;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,7 +39,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProductoActivity extends AppCompatActivity
-        implements CuadroDialogoPro.FinalizoDialogo {
+        implements CuadroDialogoProProducto.FinalizoDialogo {
 
 
     private AsyncHttpClient client;
@@ -170,16 +155,8 @@ public class ProductoActivity extends AppCompatActivity
         dialog.setMessage("Consultando Imagenes");
         dialog.setCancelable(false);
         dialog.show();
-        String ip = getString(R.string.ip);
-        String url2 = ip+"/by_producto_vist.php";
 
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ip).addConverterFactory(GsonConverterFactory.create())
-                .build();
-        iRestApi restApi = retrofit.create(iRestApi.class);
-
-        Call<List<MenuOnline>> call = restApi.meMenuId(setCategoria);
+        Call<List<MenuOnline>> call = RetrofitCall.getApiService().meMenuId(setCategoria);
         call.enqueue(new Callback<List<MenuOnline>>() {
             @Override
             public void onResponse(Call<List<MenuOnline>> call, retrofit2.Response<List<MenuOnline>> response) {
@@ -217,11 +194,8 @@ public class ProductoActivity extends AppCompatActivity
                                 setCantidad = 1;
                                 setprecio = productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio();
 
-                                new CuadroDialogoPro(context,ProductoActivity.this);
-                                RegistarProducto(view);
-
-                                //sqliteCarrito(view);
-
+                                new CuadroDialogoProProducto(context,ProductoActivity.this);
+                                //RegistarProducto(view);
                             }
                         });
                     }
@@ -252,30 +226,58 @@ public class ProductoActivity extends AppCompatActivity
 
     }
 
-
-
-    /*METODO SQLITE*/
+    /* METODO SQLITE */
     private void RegistarProducto(View view){
-        //Toast.makeText(ProductoActivity.this, "sdfdfdfds3333d", Toast.LENGTH_SHORT).show();
         try {
-            ConexionSQLiteHelper con = new ConexionSQLiteHelper(ProductoActivity.this,"bd_registar_pro",null,1);
+            ConexionSQLiteHelper con = new ConexionSQLiteHelper(ProductoActivity.this, Utilidades.NombreTablaSqLite, null, 1);
             SQLiteDatabase db = con.getWritableDatabase();
 
             //INSERT INTO detalle_carro (id, producto, id_usuario, nombre_pro, cantidad_pro, precio_pro values ();
             //RECORDAR QUE LOS PARAMETROS DE VALUES PROVIENEN DE LA ACTIVIDAD PRODUCTO
-            String insert = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
-                    +","+Utilidades.CAMPO_ID_CATEGORIA+","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO+" )VALUES ("
-                    + productlist.get(recyclerView.getChildAdapterPosition(view)).getId()+","+setIdUsuario+","+dato+",'"
-                    +productlist.get(recyclerView.getChildAdapterPosition(view)).getNombre()+"',"
-                    +setCantidad
-                    +","+productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio()+")";
-/*
-        String insert2 = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
-                +","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO
-                +") VALUES (2,3,'papa',6,5)";*/
 
-            db.execSQL(insert);
+            Sqlite_Detalle_Carrito detalle = null;
+            listCarrito = new ArrayList<>();
+            Cursor cursor = db.rawQuery("SELECT * FROM "+ Utilidades.TABLA_PEDIDO,null);
+            //"SELECT * FROM "+ Utilidades.TABLA_PEDIDO
+            while (cursor.moveToNext()){
+                detalle= new Sqlite_Detalle_Carrito();
+                detalle.setId(cursor.getInt(0));
+                detalle.setId_product(cursor.getInt(1));
+                detalle.setId_usuario(cursor.getInt(2));
+                detalle.setId_categoria(cursor.getInt(3));
+                detalle.setNombre_pro(cursor.getString(4));
+                detalle.setCantidad_pro(cursor.getInt(5));
+                detalle.setPrecio_pro(cursor.getDouble(6));
+                detalle.setRutaimagen(cursor.getString(7));
+                listCarrito.add(new Sqlite_Detalle_Carrito(){
+                });
+            }
+
+            int idProducto = productlist.get(recyclerView.getChildAdapterPosition(view)).getId();
+            List<Sqlite_Detalle_Carrito> carroFiltrado = stream(listCarrito).where(e -> e.getId_product() == 5 ).toList();
+
+            if(carroFiltrado.size() != 0){
+                String insert = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
+                        +","+Utilidades.CAMPO_ID_CATEGORIA+","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO+" )VALUES ("
+                        + idProducto+","+setIdUsuario+","+dato+",'"
+                        +productlist.get(recyclerView.getChildAdapterPosition(view)).getNombre()+"',"
+                        +setCantidad
+                        +","+productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio()+")";
+
+                db.execSQL(insert);
+            }else{
+                ContentValues cv = new ContentValues();
+                cv.put("Field1","Bob"); //These Fields should be your String values of actual column names
+                cv.put("Field2","19");
+                cv.put("Field2","Male");
+
+                int respUpdate = db.update(Utilidades.NombreTablaSqLite, cv, Utilidades.CAMPO_ID_PRODUCTO + " = " + idProducto, null);
+                if(respUpdate == 0){
+                    Toast.makeText(this, "No se actualizo el producto", Toast.LENGTH_SHORT).show();
+                }
+            }
             db.close();
+
         }catch (Exception e){
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }

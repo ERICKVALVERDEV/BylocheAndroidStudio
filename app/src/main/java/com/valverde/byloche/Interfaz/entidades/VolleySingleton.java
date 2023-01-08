@@ -1,4 +1,4 @@
-package com.valverde.byloche.entidades;
+package com.valverde.byloche.Interfaz.entidades;
 
 import android.content.Context;
 

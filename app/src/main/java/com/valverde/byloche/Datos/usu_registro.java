@@ -12,8 +12,12 @@ public class usu_registro implements Parcelable {
     private String telefono;
     private int tip_usuario;
     private String tip_nom_usuario;
+    private int IdRestaurante;
+    private String NombreRestaurante;
 
-    public usu_registro(int id, String nombre, String apellido, String email, String contraseña, String telefono, int tip_usuario,String tip_nom_usuario) {
+    public usu_registro(int id, String nombre, String apellido, String email, String contraseña, String telefono,
+                        int tip_usuario, String tip_nom_usuario, int idRestaurante, String nombreRestaurante) {
+
         Id = id;
         NombreUsuario = NombreUsuario;
         Nombre = nombre;
@@ -23,6 +27,8 @@ public class usu_registro implements Parcelable {
         this.telefono = telefono;
         this.tip_usuario = tip_usuario;
         this.tip_nom_usuario = tip_nom_usuario;
+        this.IdRestaurante = idRestaurante;
+        this.NombreRestaurante = nombreRestaurante;
     }
 
     public usu_registro() {
@@ -95,6 +101,22 @@ public class usu_registro implements Parcelable {
 
     public void setTip_nom_usuario(String tip_nom_usuario) {
         this.tip_nom_usuario = tip_nom_usuario;
+    }
+
+    public int getIdRestaurante() {
+        return IdRestaurante;
+    }
+
+    public void setIdRestaurante(int idRestaurante) {
+        IdRestaurante = idRestaurante;
+    }
+
+    public String getNombreRestaurante() {
+        return NombreRestaurante;
+    }
+
+    public void setNombreRestaurante(String nombreRestaurante) {
+        NombreRestaurante = nombreRestaurante;
     }
 
     @Override

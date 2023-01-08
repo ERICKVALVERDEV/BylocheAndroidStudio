@@ -32,6 +32,7 @@
         <activity android:name=".fragments.perfil.Cuenta_Perfil_Activity" />
         <activity android:name=".CarritoActivity" android:screenOrientation="locked"/>
         <activity android:name=".Perfil_byActivity" android:screenOrientation="locked"/>
+        <activity android:name=".Pedido_EnvioCocina_Activity" android:screenOrientation="locked"/>
         <activity
             android:name=".splashScreen"
             android:theme="@style/SplashTheme"

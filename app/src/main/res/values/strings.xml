@@ -168,8 +168,10 @@
     <string name="ca_txt13">He leído y estoy de acuerdo con: Términos y condiciones y Políticas de privacidad</string>
     <string name="ca_txt14">Escribe un comentario…</string>
     <string name="ca_txtej">Ej: 10, 20, 50</string>
-    <string name="ca_txt15">Nombre:</string>
-    <string name="ca_txt16">Telefono:</string>
+    <string name="ca_txt15">Tipo Documento:</string>
+    <string name="ca_txt16">Cedula:</string>
+    <string name="ca_txt17">Nombre:</string>
+    <string name="ca_txt18">Telefono:</string>
 
     <!-- DIRECCION ACTIVITY -->
 

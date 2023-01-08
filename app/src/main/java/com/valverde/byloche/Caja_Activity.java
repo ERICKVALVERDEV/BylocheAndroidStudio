@@ -88,7 +88,7 @@ public class Caja_Activity extends AppCompatActivity {
         radio_efectivo = findViewById(R.id.radioButton_efectivo);
         edt_comentario = findViewById(R.id.edt_coment_pedi);
         edt_valor_suelto = findViewById(R.id.edt_valor_suelto);
-        edt_Nombre = findViewById(R.id.edt_nombre);
+        edt_Nombre = findViewById(R.id.edtNombre);
         edt_Telefono = findViewById(R.id.edt_telefono);
         txt_subtotal = findViewById(R.id.txt_subtotal);
         txt_costo_envio = findViewById(R.id.txt_costo_envio);

@@ -82,35 +82,13 @@ public class adapter_categoria
 
     }
     private void cargarImagenWebService(String rutaImagen, final adapter_categoria.MyHolderView holder) {
-       // String URL_product = "https://bylocheapp.000webhostapp.com/";
         String ip = context.getString(R.string.rutaImagenes);
-        String ip2 = "C:/inetpub/wwwroot/WebByloche";
-        //File file = new File(ip+rutaImagen);
         Picasso.get()
                 .load(ip+rutaImagen)
                 .error(R.drawable.imagennodisponible)
                 .tag("Soy un TAG")
                 .noFade()
                 .into(holder.imgcat);
-
-
-/*
-        String urlImagen=URL_product+rutaImagen;
-        String urlImagen2 = urlImagen.replaceAll(" ","%20");
-
-        ImageRequest imageRequest=new ImageRequest(urlImagen2, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                holder.imgcat.setImageBitmap(response);
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER_INSIDE, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context,"error",Toast.LENGTH_SHORT).show();
-            }
-        });
-        //request.add(imageRequest);
-        VolleySingleton.getIntanciaVolley(context).addToRequestQueue(imageRequest);*/
 
     }
 

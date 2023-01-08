@@ -38,10 +38,10 @@ public class PerfilFragment extends Fragment {
     private String nlista [] = {"Mi cuenta","Direcciones","Mis Pedidos","Configuracion","Notificaciones",
             "Términos legales","Ayuda"};
 
-    ArrayList<String> nlits_usuario = new ArrayList<String>();
-    ArrayList<String> nlits_operador = new ArrayList<String>();
-    ArrayList<String> nlits_administrador = new ArrayList<String>();
-    ArrayList<String> nlits = new ArrayList<String>();
+    ArrayList<String> nlits_usuario = new ArrayList<>();
+    ArrayList<String> nlits_operador = new ArrayList<>();
+    ArrayList<String> nlits_administrador = new ArrayList<>();
+    ArrayList<String> nlits = new ArrayList<>();
 
     private SharedPreferences prefs;
     private Button btn1, btn_cerrarsesion;
