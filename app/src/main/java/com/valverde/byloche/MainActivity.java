@@ -6,18 +6,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -27,12 +23,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.valverde.byloche.Datos.utilsprefs;
-import com.valverde.byloche.Interfaz.iComunicateFragments;
 import com.valverde.byloche.fragments.CommentFragment;
 import com.valverde.byloche.fragments.HomeFragment;
-import com.valverde.byloche.fragments.InformacionFragment;
+import com.valverde.byloche.fragments.PedidoFragment;
 import com.valverde.byloche.fragments.PerfilFragment;
-import com.valverde.byloche.fragments.ProductoFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.botoomNav);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new PedidoFragment()).commit();
         }
         id_usuario = utilsprefs.leerDatosIdUsuarioPreferencias(prefs);
         tipo_usuario =utilsprefs.leerDatosTipoUsuario(prefs);
@@ -86,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.home:
                         fragment = new HomeFragment();
                         break;
-                    case R.id.comentario:
-                        fragment = new CommentFragment();
+                    case R.id.pedido:
+                        fragment = new PedidoFragment();
                         break;
-                    case R.id.perfil:
+                    case R.id.inventario:
                         fragment = new PerfilFragment();
                         break;
-                    case R.id.informacion:
+                    case R.id.configuracion:
                         fragment = new CommentFragment();
 
                        // fragment = new InformacionFragment();

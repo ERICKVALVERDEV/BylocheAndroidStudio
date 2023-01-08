@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorcrema"
+    android:background="@color/colorPrimaryApp"
     tools:context=".CarritoActivity">
 
     <!--#818080 -->
@@ -24,7 +24,7 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorcremaparatitulo"
+        android:background="@color/colorBarraApp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

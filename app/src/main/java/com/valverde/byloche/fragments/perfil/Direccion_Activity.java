@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -13,17 +12,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.valverde.byloche.CuadroDialogoPro;
 import com.valverde.byloche.Datos.Direccion_list;
-import com.valverde.byloche.Datos.Sqlite_Detalle_Carrito;
 import com.valverde.byloche.Datos.utilsprefs;
 import com.valverde.byloche.LoadingDialog;
-import com.valverde.byloche.ProductoActivity;
 import com.valverde.byloche.R;
-import com.valverde.byloche.RegistroActivity;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
 

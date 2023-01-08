@@ -23,7 +23,7 @@ public class splashScreen extends AppCompatActivity {
         Intent intentMain = new Intent(this, MainActivity.class);
 
         if(!TextUtils.isEmpty(utilsprefs.leerDatosemailPreferencias(prefs))
-                && !TextUtils.isEmpty(utilsprefs.leerDatoscontraseñaPreferencias(prefs))){
+                && !TextUtils.isEmpty(utilsprefs.leerDatoscontraseniaPreferencias(prefs))){
             startActivity(intentMain);
         }else {
             startActivity(intentLogin);

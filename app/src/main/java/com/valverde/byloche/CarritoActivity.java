@@ -32,7 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CarritoActivity extends AppCompatActivity implements CuadroDialogoPro2.FinalizoDialogo{
+public class CarritoActivity extends AppCompatActivity implements CuadroDialogoProCarrito.FinalizoDialogo
+{
 
     String get_iduser;
 
@@ -71,7 +72,6 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
         linearLayoutVacio = findViewById(R.id.linearLayout_vacio);
         linearLayoutlista = findViewById(R.id.linearLayout_lista);
 
-
         recyclerView = findViewById(R.id.recyclerDetalleCarro);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -97,17 +97,17 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
         btn_continuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CarritoActivity.this, Caja_Activity.class);
+                Intent intent = new Intent(CarritoActivity.this, Pedido_EnvioCocina_Activity.class);
                 //Le llamo total debido a este activity esta denominada con ese nombre
                 intent.putExtra("total", total);
                 startActivity(intent);
+
                 //FORMATO PARA ESPECIFICAR LA FECHA
                 String fecha = DateFormat.getDateTimeInstance().format(new Date());
                 Date date = new Date();
                 @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat fecha2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String fech = fecha2.format(date);
-                //Toast.makeText(CarritoActivity.this, fech, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -116,6 +116,7 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
     public void onBackPressed() {
         super.onBackPressed();
     }
+
     private void elimnar(int position) {
         SQLiteDatabase db = con.getWritableDatabase();
         //String[] parametro = {Utilidades.TABLA_PEDIDO};
@@ -133,12 +134,12 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
                 RutaImagen = listCarrito.get(position).getRutaimagen();
                 setNombre_pro = listCarrito.get(position).getNombre_pro();
                 setCategoria = listCarrito.get(position).getId_categoria();
-                setCantidad = 1;
+                setCantidad = listCarrito.get(position).getCantidad_pro();
                 setIdProducto = listCarrito.get(position).getId_product();
                 setIdUsuario = listCarrito.get(position).getId_usuario();
                 setprecio = listCarrito.get(position).getPrecio_pro();
                 //Toast.makeText(context, RutaImagen+" "+setNombre_pro+" "+setCantidad+" "+setCategoria+" "+setIdProducto+" "+setIdUsuario+" "+setprecio, Toast.LENGTH_SHORT).show();
-                new CuadroDialogoPro2(context,CarritoActivity.this);
+                new CuadroDialogoProCarrito(context,CarritoActivity.this);
             }
 
             @Override

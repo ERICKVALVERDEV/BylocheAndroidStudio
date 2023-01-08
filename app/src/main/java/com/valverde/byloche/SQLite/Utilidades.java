@@ -2,6 +2,8 @@ package com.valverde.byloche.SQLite;
 
 public class Utilidades {
 
+
+    public static final String NombreTablaSqLite = "bd_registar_pro";
     public static final String TABLA_PEDIDO = "detalle_carro";
     public static final String CAMPO_ID = "id";
     public static final String CAMPO_ID_PRODUCTO = "id_producto";

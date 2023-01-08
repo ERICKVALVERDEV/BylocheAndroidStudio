@@ -13,11 +13,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.loopj.android.http.AsyncHttpClient;
-import com.valverde.byloche.Caja_Activity;
 import com.valverde.byloche.Datos.usu_registro;
 import com.valverde.byloche.Datos.utilsprefs;
 import com.valverde.byloche.R;
-import com.valverde.byloche.entidades.VolleySingleton;
+import com.valverde.byloche.Interfaz.entidades.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

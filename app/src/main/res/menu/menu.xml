@@ -5,16 +5,16 @@
         android:title="Home"
         android:icon="@drawable/ic_home_black_24dp"/>
     <item
-        android:id="@+id/comentario"
-        android:title="Comentario"
+        android:id="@+id/pedido"
+        android:title="Pedidos"
         android:icon="@drawable/ic_star_black_24dp"/>
     <item
-        android:id="@+id/perfil"
-        android:title="Perfil"
+        android:id="@+id/inventario"
+        android:title="Linea Inventario"
         android:icon="@drawable/ic_perfil_box_black_24dp"/>
     <item
-        android:id="@+id/informacion"
-        android:title="Información"
+        android:id="@+id/configuracion"
+        android:title="Configuración"
         android:icon="@drawable/ic_info_outline_black_24dp"
     />
 

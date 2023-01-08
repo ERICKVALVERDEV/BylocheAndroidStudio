@@ -1,6 +1,7 @@
 package com.valverde.byloche;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +20,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.valverde.byloche.Datos.utilsprefs;
 
 import com.valverde.byloche.Datos.usu_registro;
-import com.valverde.byloche.Interfaz.iRestApi;
+import com.valverde.byloche.Online.RetrofitCall;
 import com.valverde.byloche.Online.UsuarioLogin;
 
 import java.util.ArrayList;
@@ -30,8 +31,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -99,14 +98,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setCredencialesIfExist() {
         String email = utilsprefs.leerDatosemailPreferencias(prefs);
-        String contrase = utilsprefs.leerDatoscontraseñaPreferencias(prefs);
+        String contrase = utilsprefs.leerDatoscontraseniaPreferencias(prefs);
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(contrase)){
             txt_email.setText(email);
             txt_contarseña.setText(contrase);
         }
     }
 
-    private void guardarPreferencias(String email, String contraseña, int pasar_id, int pasar_tipo_usuario,String nombre, String apellido, String telefono){
+    private void guardarPreferencias(String email, String contraseña, int pasar_id, int pasar_tipo_usuario,String nombre,
+                                     String apellido, String telefono, int idRestaurante, String nombreUsuario){
             //editor METODO DE ESCRITURA DE PREFERENTS
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("email", email);
@@ -116,6 +116,8 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("Nombre_usu",nombre);
             editor.putString("Apellido_usu",apellido);
             editor.putString("Telefono",telefono);
+            editor.putInt("IdRestaurante",idRestaurante);
+            editor.putString("NombreUsuario",nombreUsuario);
             //commit devuelve un booleano
             //editor.commit();
             editor.apply();
@@ -146,21 +148,11 @@ public class LoginActivity extends AppCompatActivity {
                {
                    String email = txt_email.getText().toString().replace(" ","%20");
                    String contra = txt_contarseña.getText().toString().replace(" ","%20");
-                   String ip = getString(R.string.ip);
-                   String url= ip+ "/by_login.php?";
-                   String url2= ip+ "/api/Usuario?";
-                   String parametros = "Clave="+email+"&Correo="+contra+"";
-                   final usu_registro usu = new usu_registro();
+                   usu_registro usu = new usu_registro();
 
 
-                   Retrofit retrofit = new Retrofit.Builder()
-                           .baseUrl(ip).addConverterFactory(GsonConverterFactory.create())
-                           .client(okHttpClient)
-                           .build();
-                   iRestApi restApi = retrofit.create(iRestApi.class);
+                   Call<List<UsuarioLogin>> call = RetrofitCall.getApiService().listRepos(email,contra);
 
-
-                   Call<List<UsuarioLogin>> call = restApi.listRepos(email,contra);
                    call.timeout();
                    call.enqueue(new Callback<List<UsuarioLogin>>() {
                        @Override
@@ -172,18 +164,25 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             List<UsuarioLogin> usuarios = response.body();
+                            if(usuarios.isEmpty()){
+                                Snackbar.make(findViewById(R.id.loginPage), "El usuario o contraseña está incorrecta", Snackbar.LENGTH_INDEFINITE)
+                                        .setBackgroundTint(ContextCompat.getColor(LoginActivity.this, R.color.colorRojo))
+                                        .show();
+                                loadingDialog.dismissDialog();
+                                return;
+                            }
                            for (UsuarioLogin item: usuarios ) {
                                usu.setId(item.getIdUsuario());
                                usu.setNombreUsuario(item.getNombreUsuario());
                                usu.setNombre(item.getNombres());
                                usu.setApellido(item.getApellidos());
-                               usu.setEmail(item.getCorreo());
+                               item.setCorreo(usu.getEmail());
                                usu.setTip_usuario(item.getIdRol());
+                               usu.setIdRestaurante(item.getIdRestaurante());
                            }
 
                            Intent i ;
                            Toast.makeText(LoginActivity.this, "Bienvenido " + usu.getNombreUsuario(), Toast.LENGTH_LONG).show();
-
 
                            switch (usu.getTip_usuario()) {
                                case 3:
@@ -202,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
                            pasar_id = usu.getId();
                            pasar_tipo_usuario = usu.getTip_usuario();
                            //Toast.makeText(LoginActivity.this, String.valueOf(usu.getTip_usuario()), Toast.LENGTH_SHORT).show();
-                           gPreferents(pasar_id,pasar_tipo_usuario,usu.getNombre(),usu.getApellido(),usu.getTelefono());
+                           gPreferents(pasar_id,pasar_tipo_usuario,usu.getNombre(),usu.getApellido(),usu.getTelefono(), usu.getIdRestaurante(),usu.getNombreUsuario());
                            //EL INTENT ES PARA LOS DIFERENTES PERFILES DEL LOGIN
                            i.putExtra("usu",usu);
                            loadingDialog.dismissDialog();
@@ -219,70 +218,6 @@ public class LoginActivity extends AppCompatActivity {
                        }
                    });
 
-
-                   /*
-                   cliente.post(url2+parametros, new AsyncHttpResponseHandler() {
-                       @Override
-                       public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                           if (statusCode == 200) {
-                               String resp = new String(responseBody);
-                               Toast.makeText(LoginActivity.this, resp, Toast.LENGTH_SHORT).show();
-                               if (resp.equalsIgnoreCase("null")) {
-                                   Toast.makeText(LoginActivity.this, "Datos incorrectos!", Toast.LENGTH_SHORT).show();
-                                   loadingDialog.dismissDialog();
-                               } else {
-                                   try {
-
-
-                                       JSONObject jsonObject = new JSONObject(resp);
-                                       usu.setId(jsonObject.getInt("usu_id"));
-                                       usu.setNombre(jsonObject.getString("usu_nombre"));
-                                       usu.setApellido(jsonObject.getString("usu_apellido"));
-                                       usu.setEmail(jsonObject.getString("usu_email"));
-                                       usu.setContraseña(jsonObject.getString("usu_contrasena"));
-                                       usu.setTelefono(jsonObject.getString("usu_telefono"));
-                                       usu.setTip_usuario(jsonObject.getInt("usu_tipo_usuario"));
-                                       Intent i ;
-                                       Toast.makeText(LoginActivity.this, "Bienvenido " + usu.getNombre(), Toast.LENGTH_LONG).show();
-                                       //usu.setTip_nom_usuario("Cliente");
-                                       // txt.setText(usu.getNombre());
-                                       switch (usu.getTip_usuario()) {
-                                           case 1:
-                                               usu.setTip_nom_usuario("Usuario");
-                                               break;
-                                           case 2:
-                                               usu.setTip_nom_usuario("Operador");
-                                               break;
-                                           case 3:
-                                               usu.setTip_nom_usuario("Administrador");
-                                               break;
-                                       }
-                                       i = new Intent(LoginActivity.this, MainActivity.class);
-                                       i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                       i.putExtra("id_usuario",usu.getId());
-                                       pasar_id = usu.getId();
-                                       pasar_tipo_usuario = usu.getTip_usuario();
-                                       //Toast.makeText(LoginActivity.this, String.valueOf(usu.getTip_usuario()), Toast.LENGTH_SHORT).show();
-                                       gPreferents(pasar_id,pasar_tipo_usuario,usu.getNombre(),usu.getApellido(),usu.getTelefono());
-                                       //EL INTENT ES PARA LOS DIFERENTES PERFILES DEL LOGIN
-                                       i.putExtra("usu",usu);
-                                       loadingDialog.dismissDialog();
-                                       startActivity(i);
-                                   } catch (Exception e) {
-                                       // btn_acceder.setText(usu.getContraseña());
-                                       Toast.makeText(LoginActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                       loadingDialog.dismissDialog();
-                                   }
-                               }
-                           }
-                       }
-                       @Override
-                       public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                           Toast.makeText(LoginActivity.this, "Parece que hay un problema...", Toast.LENGTH_SHORT).show();
-                           Log.d("ERROR: ", error.toString());
-                           loadingDialog.dismissDialog();
-                       }
-                   });*/
                }
            }
        });
@@ -292,12 +227,13 @@ public class LoginActivity extends AppCompatActivity {
 
 /*FIN DEL METODO*/
 
-    private void gPreferents(int pasarid, int pasar_tipo_usuario,String nombre, String apellido, String telefono ){
+    private void gPreferents(int pasarid, int pasar_tipo_usuario,String nombre, String apellido,
+                             String telefono, int idRestaurante, String nombreUsuario ){
         String email = txt_email.getText().toString();
         String contrase = txt_contarseña.getText().toString();
         if(login(email,contrase)){
             //irActividadPrincipal();
-            guardarPreferencias(email,contrase,pasarid,pasar_tipo_usuario,nombre,apellido,telefono);
+            guardarPreferencias(email,contrase,pasarid,pasar_tipo_usuario,nombre,apellido,telefono,idRestaurante,nombreUsuario);
         }
     }
 
