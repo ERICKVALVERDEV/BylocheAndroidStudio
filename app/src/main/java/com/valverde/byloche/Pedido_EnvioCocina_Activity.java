@@ -102,6 +102,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                         return;
                     }
                     clienteOnline.addAll(response.body());
+
                 }
 
                 @Override
