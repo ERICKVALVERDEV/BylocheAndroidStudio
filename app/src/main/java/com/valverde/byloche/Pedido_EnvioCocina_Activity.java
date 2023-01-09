@@ -228,6 +228,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                                 return;
                             }
                             DialogAlerta(Pedido_EnvioCocina_Activity.this,"Estado",response.body().getMensaje());
+                            String nuevoTexto = "Hola Mundo";
                         }
 
                         @Override
