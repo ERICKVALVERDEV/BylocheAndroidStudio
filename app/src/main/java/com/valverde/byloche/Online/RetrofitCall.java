@@ -15,8 +15,8 @@ public class RetrofitCall {
 
     private static iRestApi API_SERVICE;
 
-    private static final String BASE_URL1 = "https://localhost:44394";
-    private static final String BASE_URL = "http://192.168.100.95:9092";
+    private static final String BASE_URL = "http://192.168.100.95/";
+    private static final String BASE_URL1 = "http://192.168.100.95:9092";
 
     public static iRestApi getApiService(){
 

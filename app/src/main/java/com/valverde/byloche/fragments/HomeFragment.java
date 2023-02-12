@@ -23,6 +23,8 @@ import com.valverde.byloche.Datos.usu_categoria;
 import com.valverde.byloche.Interfaz.iRestApi;
 import com.valverde.byloche.MainActivity;
 import com.valverde.byloche.Online.CategoriaOnline;
+import com.valverde.byloche.Online.ResponseServer;
+import com.valverde.byloche.Online.RetrofitCall;
 import com.valverde.byloche.ProductoActivity;
 import com.valverde.byloche.R;
 import com.valverde.byloche.adaptadores.adapter_categoria;
@@ -107,8 +109,6 @@ public class HomeFragment extends Fragment {
 
 
  private void cargarwebCategoria(){
-     String ip = getString(R.string.ip);
-     String urlImagen2 = ip+"/by_categoria_vist.php";
 
      dialog = new ProgressDialog(getContext());
      dialog.setMessage("Consultando Imagenes");
@@ -116,14 +116,7 @@ public class HomeFragment extends Fragment {
      dialog.setCancelable(false);
      dialog.show();
 
-
-     Retrofit retrofit = new Retrofit.Builder()
-             .baseUrl(ip).addConverterFactory(GsonConverterFactory.create())
-             .build();
-     iRestApi restApi = retrofit.create(iRestApi.class);
-
-     Call<List<CategoriaOnline>> call = restApi.meCatergoria();
-
+     Call<List<CategoriaOnline>> call = RetrofitCall.getApiService().meCatergoria();
      call.enqueue(new Callback<List<CategoriaOnline>>() {
          @Override
          public void onResponse(Call<List<CategoriaOnline>> call, retrofit2.Response<List<CategoriaOnline>> response) {
@@ -134,6 +127,11 @@ public class HomeFragment extends Fragment {
 
              usu_categoria p = new usu_categoria();
              List<CategoriaOnline> categorias = response.body();
+             if(categorias == null){
+                 dialog.dismiss();
+                 return;
+             }
+
              try {
 
                  for(CategoriaOnline item : categorias){

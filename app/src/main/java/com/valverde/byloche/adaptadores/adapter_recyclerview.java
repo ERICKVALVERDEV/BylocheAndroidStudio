@@ -1,6 +1,8 @@
 package com.valverde.byloche.adaptadores;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,9 +91,8 @@ public class adapter_recyclerview extends RecyclerView.Adapter<adapter_recyclerv
     private void cargarImagenWebService(String rutaImagen, final MyViewHolder holder) {
 
         String ip2 = mCtx.getString(R.string.rutaImagenes);
-
-        Picasso.get().load(ip2+"/"+rutaImagen).into(holder.imageView);
-
+//        Picasso.get().setLoggingEnabled(true);
+        Picasso.get().load(ip2+rutaImagen).error(R.drawable.imagennodisponible).into(holder.imageView);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

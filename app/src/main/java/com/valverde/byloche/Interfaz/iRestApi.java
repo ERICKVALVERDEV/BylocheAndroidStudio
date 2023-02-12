@@ -15,19 +15,19 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface iRestApi {
-    @GET("/api/Usuario")
+    @GET("/WebApiByloche/api/Usuario")
     Call<List<UsuarioLogin>> listRepos(@Query("Correo") String Correo, @Query("Clave") String Clave);
 
-    @POST("api/Categoria")
+    @POST("/WebApiByloche/api/Categoria")
     Call<List<CategoriaOnline>> meCatergoria();
 
-    @POST("api/MenuId")
+    @POST("/WebApiByloche/api/MenuId")
     Call<List<MenuOnline>> meMenuId(@Query("IdCategoria") int IdCategoria);
 
-    @POST("api/Clientes")
+    @POST("/WebApiByloche/api/Clientes")
     Call<List<ClientesOnline>> meConsultarClientes();
 
-    @POST("api/Ventas")
+    @POST("/WebApiByloche/api/Ventas")
     Call<ResponseServer> guardarPedido(@Query("xml") StringBuilder ventas, @Query("nombreUsuario") String nombreUsuario );
 
 }

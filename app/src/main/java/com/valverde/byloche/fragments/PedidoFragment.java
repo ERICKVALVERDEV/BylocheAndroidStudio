@@ -126,6 +126,10 @@ public class PedidoFragment extends Fragment {
 
              usu_categoria p = new usu_categoria();
              List<CategoriaOnline> categorias = response.body();
+             if(categorias == null){
+                 dialog.dismiss();
+                 return;
+             }
              try {
 
                  for(CategoriaOnline item : categorias){

@@ -207,7 +207,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                     xml.append("<VENTASDETALLE>");
                     xml.append("<IdDetalleVenta>0</IdDetalleVenta>");
                     xml.append("<IdVenta>0</IdVenta>");
-                    xml.append("<IdProducto>"+item.getId_product()+"</IdProducto>");
+                    xml.append("<IdMenu>"+item.getId_product()+"</IdMenu>");
                     xml.append("<Cantidad>"+item.getCantidad_pro()+"</Cantidad>");
                     xml.append("<PrecioUnidad>"+item.getPrecio_pro()+"</PrecioUnidad>");
                     xml.append("<PrecioTotal>"+precioTotal+"</PrecioTotal>");

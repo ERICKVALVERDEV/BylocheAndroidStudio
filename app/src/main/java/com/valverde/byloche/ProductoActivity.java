@@ -1,5 +1,6 @@
 package com.valverde.byloche;
 
+import static com.valverde.byloche.Utils.AlertDialog.DialogAlerta;
 import static br.com.zbra.androidlinq.Linq.stream;
 
 import android.app.ProgressDialog;
@@ -164,7 +165,6 @@ public class ProductoActivity extends AppCompatActivity
                     Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 List<MenuOnline> menus = response.body();
                 usu_producto p = new usu_producto();
                 try {
@@ -180,10 +180,8 @@ public class ProductoActivity extends AppCompatActivity
                         productlist.add(p);
 
                         adapter_recyclerview adapter = new adapter_recyclerview(productlist,ProductoActivity.this);
-                        dialog.dismiss();
                         recyclerView.setAdapter(adapter);
 
-                        recyclerView.setAdapter(adapter);
                         adapter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -195,22 +193,22 @@ public class ProductoActivity extends AppCompatActivity
                                 setprecio = productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio();
 
                                 new CuadroDialogoProProducto(context,ProductoActivity.this);
-                                //RegistarProducto(view);
                             }
                         });
                     }
 
-
                 }catch (Exception e){
-
+                    DialogAlerta(ProductoActivity.this,"Error",e.getMessage());
+                    dialog.dismiss();
                 }
+                dialog.dismiss();
                 p = new usu_producto();
             }
 
             @Override
             public void onFailure(Call<List<MenuOnline>> call, Throwable t) {
 
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                DialogAlerta(ProductoActivity.this,"Alerta",t.getMessage());
                 dialog.dismiss();
             }
         });
