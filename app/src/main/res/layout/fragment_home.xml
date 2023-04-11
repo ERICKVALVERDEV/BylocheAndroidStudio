@@ -8,82 +8,19 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <GridLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:orientation="horizontal"
-        android:rowCount="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/colorBarraApp">
+    <include
+        android:id="@+id/include"
+        layout="@layout/partial_title_bar" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="cursive"
-            android:text="Pedidos en Curso"
-            android:textColor="@color/colorplomo"
-            android:textSize="30sp"
-            android:textStyle="bold"/>
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="95dp"
-            android:layout_height="50dp"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="9dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/logo"
-            android:layout_gravity="end"/>
-    </GridLayout>
-
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DD888787"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridLayout"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recylclerhome"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
-        app:layout_constraintVertical_bias="0.0">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recylclerhome"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                tools:visibility="visible" />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

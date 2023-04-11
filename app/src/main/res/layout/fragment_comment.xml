@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorcrema"
+    android:background="@color/white"
     tools:context="com.valverde.byloche.fragments.CommentFragment">
 
 
@@ -29,7 +29,7 @@
                 android:layout_marginTop="25dp"
                 android:fontFamily="@font/alegreya_sans"
                 android:text="@string/tcoment_titulo"
-                android:textColor="@color/colordorado2"
+                android:textColor="@color/red"
                 android:textSize="40sp"
                 android:textStyle="bold" />
 

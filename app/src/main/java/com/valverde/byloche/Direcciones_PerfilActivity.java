@@ -61,6 +61,9 @@ public class Direcciones_PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_direcciones__perfil);
 
+        TextView titleBar = findViewById(R.id.titleBarTitle);
+        titleBar.setText(R.string.di_titulo);
+
         img_volver = findViewById(R.id.img_volver);
         btn_nuevaDireccion = findViewById(R.id.btn_nuevaDireccion);
         txt_direccion = findViewById(R.id.txt_direccion);

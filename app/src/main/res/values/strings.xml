@@ -13,15 +13,14 @@
 
     <!--  WEB  -->
     <!--Web Api SqlServer-->
-    <string name="ip">http://192.168.100.95:9092</string>
-    <string name="rutaImagenes">http://192.168.100.95:9090</string>
+    <string name="ip">http://192.168.100.39:9092</string>
+    <string name="rutaImagenes">http://192.168.100.39:9090</string>
 
     <string name="ip2">http://192.168.100.127:9092</string>
 
     <!--Web Api MySql-->
     <string name="ip3">https://menubyloche.000webhostapp.com</string>
     <string name="ip4">http://192.168.100.112:8080/byloche_app</string>
-
 
 
     <!-- Linear Layout home -->
@@ -95,12 +94,12 @@
     <!-- FRAGMENTS PERFIL-->
 
     <!-- Cuenta -->
-    <string name="cf_titulo">DATOS PERSONALES</string>
+    <string name="cf_titulo">Datos personales</string>
     <string name="cf_nombre">Nombre</string>
     <string name="cf_apellido">Apellido</string>
     <string name="cf_email">E-mail</string>
     <string name="cf_celular">Teléfono</string>
-    <string name="cf_datos">EDITAR MI CUENTA</string>
+    <string name="cf_datos">Editar mi cuenta</string>
     <string name="cf_Contraseña">Actualizar contraseña</string>
     <string name="cf_passact">Contraseña actual</string>
     <string name="cf_passnueva">Contraseña nueva</string>
@@ -108,7 +107,7 @@
 
     <!-- Mis Direcciones -->
 
-    <string name="di_titulo">DIRECCION DE ENTREGA</string>
+    <string name="di_titulo">Direccion de entrega</string>
     <string name="di_nuevo">Agregar nueva Dirección</string>
     <string name="di_midireccion">Mis direcciones</string>
 
@@ -208,5 +207,11 @@
         <item>Ayuda</item>
     </string-array>
 
+    <!-- Strings nuevos -->
+    <string name="price">$%1$s</string>
+    <string name="quantity">Cantidad: %1$s</string>
+    <string name="orderTitle">Pedido #%1$d</string>
+    <string name="orderState">Estado: %1$s</string>
+    <string name="ingredient">%1$s %2$.2f %3$s $%4$.2f</string>
 
 </resources>

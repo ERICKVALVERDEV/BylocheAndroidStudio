@@ -1,4 +1,4 @@
-package com.valverde.byloche.Online;
+package com.valverde.byloche.fragments.Online;
 
 public enum TipoDocumentoCliente {
     Cedula,

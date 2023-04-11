@@ -1,81 +1,106 @@
 package com.valverde.byloche;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import com.valverde.byloche.Datos.Sqlite_Detalle_Carrito;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
-import com.valverde.byloche.adaptadores.adapter_ListViewCarrito;
+import com.valverde.byloche.SQLite.cart.Cart;
+import com.valverde.byloche.SQLite.ingredient.Ingredient;
+import com.valverde.byloche.SQLite.order.Order;
 import com.valverde.byloche.adaptadores.adapter_recyclerCarro;
+import com.valverde.byloche.fragments.Online.Estado;
+import com.valverde.byloche.fragments.Online.MesaOnline;
+import com.valverde.byloche.fragments.Online.RetrofitCall;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class CarritoActivity extends AppCompatActivity implements CuadroDialogoProCarrito.FinalizoDialogo
-{
+import retrofit2.Call;
+import retrofit2.Callback;
+
+public class CarritoActivity extends AppCompatActivity implements CuadroDialogoProCarrito.FinalizoDialogo {
 
     String get_iduser;
 
     private RecyclerView recyclerView;
     public static adapter_recyclerCarro adapter3;
     public static ArrayList<String> listaInformacion;
-    public static ArrayList<Sqlite_Detalle_Carrito> listCarrito;
+    public static List<Cart> listCarrito;
     ConexionSQLiteHelper con;
 
-    Button btn_vaciar, btn_continuar;
-    LinearLayout linearLayoutVacio, linearLayoutlista;
+    TextView totalPrice, titleBar;
+    Button btn_vaciar, btn_continuar, btnSaveLocal;
+    LinearLayout linearLayoutVacio;
     ImageView img_volver;
     int dato;
+    int currentOrderId;
+    String currentTable;
     public double subtotal = 0, total = 0;
     public Context context;
-    public static String RutaImagen, setNombre_pro ;
+    public static String RutaImagen, setNombre_pro;
     public static double setprecio;
-    public static int setIdProducto, setIdUsuario, setCantidad, setCategoria;
+    public static int setIdProducto, setIdUsuario, setCantidad, setCategoria, setCurrentOrderId;
+    public static List<Ingredient> setIngredients;
+
+    Spinner spinnerTables;
+    ArrayAdapter<MesaOnline> adapterSpinnerTables;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carrito);
 
-        con = new ConexionSQLiteHelper(this, "bd_registar_pro",null,1);
-        context= this;
+        con = new ConexionSQLiteHelper(this, "bd_registar_pro", null, 1);
+        context = this;
+
+        titleBar = findViewById(R.id.titleBarTitle);
+        titleBar.setText("Carrito");
+        btnSaveLocal = findViewById(R.id.btnSaveLocal);
 
         dato = getIntent().getIntExtra("categoria", 0);
+        currentOrderId = getIntent().getIntExtra("currentOrderId",-2);
+        currentTable = getIntent().getStringExtra("currentTable");
+
+        if(currentTable == null){
+            currentTable = "Mesa #1";
+        }
+
+        loadTables();
 
         btn_vaciar = findViewById(R.id.btn_vaciar);
         img_volver = findViewById(R.id.img_volver);
         btn_continuar = findViewById(R.id.btn_continuar);
-
+        totalPrice = findViewById(R.id.totalPrice);
+        spinnerTables = findViewById(R.id.spinnerTables);
 
         //listViewDetalleCarrito = findViewById(R.id.listViewDetalleCarro);
         linearLayoutVacio = findViewById(R.id.linearLayout_vacio);
-        linearLayoutlista = findViewById(R.id.linearLayout_lista);
 
         recyclerView = findViewById(R.id.recyclerDetalleCarro);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-        adapter3 = new adapter_recyclerCarro(listCarrito,CarritoActivity.this);
+        adapter3 = new adapter_recyclerCarro(listCarrito, CarritoActivity.this);
         recyclerView.setAdapter(adapter3);
 
         get_iduser = getIntent().getStringExtra("id_usuario2");
@@ -86,20 +111,22 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
                 vaciar_Carrito();
             }
         });
+
         ConsultarListarProducto();
 
         clickVolver();
         botonContinuar();
-
+        setBtnSaveLocalAction();
     }
 
-    private void botonContinuar(){
+    private void botonContinuar() {
         btn_continuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(CarritoActivity.this, Pedido_EnvioCocina_Activity.class);
                 //Le llamo total debido a este activity esta denominada con ese nombre
-                intent.putExtra("total", total);
+                intent.putExtra("currentOrderId", currentOrderId);
+                intent.putExtra("currentOrderTotal", total);
                 startActivity(intent);
 
                 //FORMATO PARA ESPECIFICAR LA FECHA
@@ -112,119 +139,105 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
         });
     }
 
+    private void setBtnSaveLocalAction() {
+        btnSaveLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currentOrderId == -1){
+                    String table = spinnerTables.getSelectedItem().toString();
+                    Order newOrder = new Order(Estado.PREPEDIDO.toString(), table);
+                    long newOrderId = con.saveOrderLocal(newOrder);
+                    Log.i("mydebug", "newOrderId = " + newOrderId);
+
+                    List<Cart> carts = con.getCartsByOrderId("-1");
+                    for (Cart cart : carts) {
+                        long cartId = cart.getId();
+                        con.updateCartOrderId(cartId, newOrderId);
+                    }
+                }else{
+                    String table = spinnerTables.getSelectedItem().toString();
+                    Order order = con.getOrderById(String.valueOf(currentOrderId));
+                    Order orderUpdated = new Order(order.getState(), table);
+                    con.updateOrder(orderUpdated, String.valueOf(currentOrderId));
+                }
+                Intent intent = new Intent(CarritoActivity.this, MainActivity.class);
+                intent.putExtra("fragmentToLoad","pedidos");
+                startActivity(intent);
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
 
     private void elimnar(int position) {
-        SQLiteDatabase db = con.getWritableDatabase();
-        //String[] parametro = {Utilidades.TABLA_PEDIDO};
-        //db.delete("SELECT * from "+Utilidades.TABLA_PEDIDO,null,null);
-        String delete = "DELETE from "+ Utilidades.TABLA_PEDIDO +" WHERE " +Utilidades.CAMPO_ID_PRODUCTO + " = "+listCarrito.get(position).getId_product() ;
-        db.execSQL(delete);
-
-        db.close();
+        String cartId = String.valueOf(listCarrito.get(position).getId());
+        String productId = String.valueOf(listCarrito.get(position).getProductId());
+        int result = con.deleteCartsByIdAndProductId(cartId, productId);
+        Log.i("mydebug", "cartId: " + cartId + " | productId: " + productId);
+        Log.i("mydebug", "Delete eesult: " + result);
     }
-    private void clickListView(){
 
+    private void clickListView() {
         adapter3.setOnItemClickListener(new adapter_recyclerCarro.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                RutaImagen = listCarrito.get(position).getRutaimagen();
-                setNombre_pro = listCarrito.get(position).getNombre_pro();
-                setCategoria = listCarrito.get(position).getId_categoria();
-                setCantidad = listCarrito.get(position).getCantidad_pro();
-                setIdProducto = listCarrito.get(position).getId_product();
-                setIdUsuario = listCarrito.get(position).getId_usuario();
-                setprecio = listCarrito.get(position).getPrecio_pro();
-                //Toast.makeText(context, RutaImagen+" "+setNombre_pro+" "+setCantidad+" "+setCategoria+" "+setIdProducto+" "+setIdUsuario+" "+setprecio, Toast.LENGTH_SHORT).show();
-                new CuadroDialogoProCarrito(context,CarritoActivity.this);
+                RutaImagen = listCarrito.get(position).getProductImagePath();
+                setNombre_pro = listCarrito.get(position).getProductName();
+                setCategoria = listCarrito.get(position).getCategoryId();
+                setCantidad = listCarrito.get(position).getProductQuantity();
+                setIdProducto = listCarrito.get(position).getProductId();
+                setIdUsuario = listCarrito.get(position).getUserId();
+                setprecio = listCarrito.get(position).getProductPrice();
+                setCurrentOrderId = currentOrderId;
+
+                String productId = String.valueOf(listCarrito.get(position).getProductId());
+                String cartId = String.valueOf(listCarrito.get(position).getId());
+
+                setIngredients = con.getIngredientsByProductIdAndCartId(productId, cartId);
+                Log.i("mydebug", setIngredients.toString());
+                new CuadroDialogoProCarrito(context, CarritoActivity.this);
             }
 
             @Override
             public void onDeleteClick(int position) {
                 elimnar(position);
-                //LE DPY EL USO A notifyDataSetChanged cuando modifico la lista del adaptador
                 listCarrito.remove(position);
                 adapter3.notifyDataSetChanged();
                 obtenerLista();
             }
         });
-
-      /*
-        listViewDetalleCarrito.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
-
-                RutaImagen = listCarrito.get(i).getRutaimagen();
-                setNombre_pro = listCarrito.get(i).getNombre_pro();
-                setCategoria = listCarrito.get(i).getId_categoria();
-                setCantidad = 1;
-                setIdProducto = listCarrito.get(i).getId_product();
-                setIdUsuario = listCarrito.get(i).getId_usuario();
-                setprecio = listCarrito.get(i).getPrecio_pro();
-                //Toast.makeText(context, RutaImagen+" "+setNombre_pro+" "+setCantidad+" "+setCategoria+" "+setIdProducto+" "+setIdUsuario+" "+setprecio, Toast.LENGTH_SHORT).show();
-               new CuadroDialogoPro2(context,CarritoActivity.this);
-              // adapter.clear();
-                //CAMBIAR A UN RECYCLER VIEW CHUCHA
-
-               /*  Intent intent = new Intent(CarritoActivity.this, ProductoActivity.class);
-                intent.putExtra("id_usuario",get_iduser);
-                intent.putExtra("dato",listCarrito.get(i).getId_categoria());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.	FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                startActivity(intent);
-              //onResume();
-
-            }
-        });*/
     }
 
 
-    private void clickVolver(){
+    private void clickVolver() {
         img_volver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
-
     }
+
     public void ConsultarListarProducto() {
-        SQLiteDatabase db = con.getReadableDatabase();
-        Sqlite_Detalle_Carrito detalle = null;
-        listCarrito = new ArrayList<Sqlite_Detalle_Carrito>();
-        //SELECT * FROM detalle_carro;
-        //select id_producto,id_usuario,nombre_pro,cantidad_pro,precio_pro, sum(detaller_carrito.cantidad_pro) as SUMA_TOTAL
-        //from detaller_carrito where  id_producto = 2 or id_producto = 3 or id_producto = 5
-        //group by id_producto,id_usuario,nombre_pro,cantidad_pro,precio_pro
-        Cursor cursor = db.rawQuery("SELECT * FROM "+ Utilidades.TABLA_PEDIDO,null);
-        //"SELECT * FROM "+ Utilidades.TABLA_PEDIDO
-        while (cursor.moveToNext()){
-            detalle= new Sqlite_Detalle_Carrito();
-            detalle.setId(cursor.getInt(0));
-            detalle.setId_product(cursor.getInt(1));
-            detalle.setId_usuario(cursor.getInt(2));
-            detalle.setId_categoria(cursor.getInt(3));
-            detalle.setNombre_pro(cursor.getString(4));
-            detalle.setCantidad_pro(cursor.getInt(5));
-            detalle.setPrecio_pro(cursor.getDouble(6));
-            detalle.setRutaimagen(cursor.getString(7));
-           listCarrito.add(detalle);
-        }
-        adapter3 = new adapter_recyclerCarro(listCarrito,CarritoActivity.this);
+        listCarrito = con.getCartsByOrderId(String.valueOf(currentOrderId));
+        adapter3 = new adapter_recyclerCarro(listCarrito, CarritoActivity.this);
         obtenerLista();
         clickListView();
-        if (listCarrito.isEmpty()){
-            if (linearLayoutVacio.getVisibility() == View.GONE){
+        if (listCarrito.isEmpty()) {
+            if (linearLayoutVacio.getVisibility() == View.GONE) {
                 linearLayoutVacio.setVisibility(View.VISIBLE);
                 btn_continuar.setEnabled(true);
                 btn_continuar.setVisibility(View.INVISIBLE);
+                totalPrice.setVisibility(View.INVISIBLE);
+                btnSaveLocal.setVisibility(View.INVISIBLE);
             }
-        }else if (linearLayoutlista.getVisibility() == View.GONE){
-            linearLayoutlista.setVisibility(View.VISIBLE);
+        } else if (recyclerView.getVisibility() == View.GONE) {
+            recyclerView.setVisibility(View.VISIBLE);
             btn_continuar.setEnabled(true);
-            }
+        }
         recyclerView.setAdapter(adapter3);
     }
 
@@ -233,27 +246,23 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
         total = 0;
         listaInformacion = new ArrayList<String>();
 
-        for(int i = 0; i<listCarrito.size(); i++){
-            listaInformacion.add(String.valueOf(listCarrito.get(i).getCantidad_pro())+" - "
-                    +listCarrito.get(i).getNombre_pro()+" - "+listCarrito.get(i).getId_categoria()+" Precio: "+listCarrito.get(i).getPrecio_pro());
-            subtotal = listCarrito.get(i).getCantidad_pro() * listCarrito.get(i).getPrecio_pro();
+        for (int i = 0; i < listCarrito.size(); i++) {
+            listaInformacion.add(listCarrito.get(i).getProductQuantity() + " - "
+                    + listCarrito.get(i).getProductName() + " - " + listCarrito.get(i).getCategoryId() + " Precio: " + listCarrito.get(i).getProductPrice());
+            subtotal = listCarrito.get(i).getProductQuantity() * listCarrito.get(i).getProductPrice();
             total = subtotal + total;
         }
-        btn_continuar.setText("Continuar                |                "+total);
+        totalPrice.setText("Total.................................." + total);
     }
 
 
-
-    private void vaciar_Carrito(){
+    private void vaciar_Carrito() {
         SQLiteDatabase db = con.getWritableDatabase();
-        //String[] parametro = {Utilidades.TABLA_PEDIDO};
-        //db.delete("SELECT * from "+Utilidades.TABLA_PEDIDO,null,null);
-        String delete = "DELETE from "+Utilidades.TABLA_PEDIDO;
-       // Toast.makeText(CarritoActivity.this, delete, Toast.LENGTH_SHORT).show();
-         db.execSQL(delete);
-         db.close();
-         finish();
-         startActivity(getIntent());
+        String delete = "DELETE from " + Utilidades.TABLA_PEDIDO;
+        db.execSQL(delete);
+        db.close();
+        finish();
+        startActivity(getIntent());
     }
 
     @Override
@@ -262,10 +271,57 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
 
     @Override
     public void ResltValor(int[] valor) {
-        if(valor[0] == 1){
-           // Toast.makeText(context, String.valueOf(valor), Toast.LENGTH_SHORT).show();
+        if (valor[0] == 1) {
+            // Toast.makeText(context, String.valueOf(valor), Toast.LENGTH_SHORT).show();
             ConsultarListarProducto();
         }
+    }
+
+
+    private void loadTables(){
+        Call<List<MesaOnline>> call = RetrofitCall.getApiService().getTablesByRestaurant(MainActivity.id_restaurante);
+
+        call.enqueue(new Callback<List<MesaOnline>>() {
+            @Override
+            public void onResponse(Call<List<MesaOnline>> call, retrofit2.Response<List<MesaOnline>> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<MesaOnline> tablesList = response.body();
+                if(tablesList == null){
+                    return;
+                }
+
+                List<String> tableNames = new ArrayList<>();
+                for (MesaOnline mesaOnline:tablesList) {
+                    tableNames.add(mesaOnline.getNombre());
+                }
+
+                adapterSpinnerTables = new ArrayAdapter<MesaOnline>(context, android.R.layout.simple_spinner_item, tablesList);
+                adapterSpinnerTables.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                spinnerTables.setAdapter(adapterSpinnerTables);
+                spinnerTables.setSelection(tableNames.indexOf(currentTable));
+                spinnerTables.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        MesaOnline mesaOnline = (MesaOnline) parent.getSelectedItem();
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<MesaOnline>> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

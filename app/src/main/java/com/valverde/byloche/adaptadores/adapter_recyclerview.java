@@ -79,7 +79,7 @@ public class adapter_recyclerview extends RecyclerView.Adapter<adapter_recyclerv
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.txtnombre.setText(product_list.get(position).getNombre());
         holder.txtcategoria.setText(String.valueOf(product_list.get(position).getCategoria()));
-        holder.txtprecio.setText(String.valueOf(product_list.get(position).getPrecio()));
+        holder.txtprecio.setText("$" + String.valueOf(product_list.get(position).getPrecio()));
         holder.txtdescripcion.setText(product_list.get(position).getDescripcion());
         if (product_list.get(position).getRuta_image()!=null){
             cargarImagenWebService(product_list.get(position).getRuta_image(),holder);

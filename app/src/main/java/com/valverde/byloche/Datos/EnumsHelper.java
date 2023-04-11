@@ -1,6 +1,6 @@
 package com.valverde.byloche.Datos;
 
-import com.valverde.byloche.Online.TipoDocumentoCliente;
+import com.valverde.byloche.fragments.Online.TipoDocumentoCliente;
 
 public class EnumsHelper {
 

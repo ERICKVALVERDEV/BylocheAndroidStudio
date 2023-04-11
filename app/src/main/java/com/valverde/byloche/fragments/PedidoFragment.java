@@ -12,91 +12,125 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.loopj.android.http.AsyncHttpClient;
+import com.valverde.byloche.CarritoActivity;
+import com.valverde.byloche.CategoriaActivity;
 import com.valverde.byloche.Datos.usu_categoria;
-import com.valverde.byloche.Interfaz.iRestApi;
 import com.valverde.byloche.MainActivity;
-import com.valverde.byloche.Online.CategoriaOnline;
-import com.valverde.byloche.Online.RetrofitCall;
+import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
+import com.valverde.byloche.SQLite.order.Order;
+import com.valverde.byloche.adaptadores.adapter_confirmedOrders;
+import com.valverde.byloche.adaptadores.adapter_unconfirmedOrders;
+import com.valverde.byloche.fragments.Online.CategoriaOnline;
+import com.valverde.byloche.fragments.Online.RetrofitCall;
 import com.valverde.byloche.ProductoActivity;
 import com.valverde.byloche.R;
 import com.valverde.byloche.adaptadores.adapter_categoria;
+import com.valverde.byloche.fragments.Online.UserOnline;
+import com.valverde.byloche.fragments.Online.VentasOnline;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PedidoFragment extends Fragment {
 
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager manager;
-    RecyclerView.Adapter adapter;
+    RecyclerView recyclerViewUnconfirmedOrders;
+    adapter_unconfirmedOrders adapterUnconfirmedOrders;
+    RecyclerView.LayoutManager managerUnconfirmedOrders;
+
+    RecyclerView recyclerViewConfirmedOrders;
+    RecyclerView.Adapter adapterConfirmedOrders;
+    RecyclerView.LayoutManager managerConfirmedOrders;
+
     View view;
     Context context = this.getContext();
     //LLAMAR VOLLEY
     private AsyncHttpClient client;
     private Request request;
     JsonObjectRequest jsonObjectRequest;
-    ProgressDialog dialog;
+    ProgressDialog dialog1;
+    ProgressDialog dialog2;
+    ConexionSQLiteHelper con;
 
-    private ArrayList<usu_categoria> categoria_list;
+    private List<Order> unconfirmedOrdersList;
+    private List<VentasOnline> confirmedOrdersList;
+
+    public static List<UserOnline> setUsers;
 
     public PedidoFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        con = new ConexionSQLiteHelper(this.getContext(), "bd_registar_pro", null, 1);
+        loadUsers();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_pedido, container, false);
-        //INICIALIZAR LOS ELEMENTOS
-        //expLV = (ExpandableListView) view.findViewById(R.id.expLV);
-        //listaCategoria = new ArrayList<>();
-       //mapChild = new HashMap<>();
-        //cargarDatos();
-
-
-        Thread tr = new Thread(){
+        TextView titleBar = view.findViewById(R.id.titleBarTitle);
+        titleBar.setText("Pedidos");
+        TextView addOrder = view.findViewById(R.id.addOrderButton);
+        addOrder.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                client = new AsyncHttpClient();
-                categoria_list = new ArrayList<>();
-                create_recyler();
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), CategoriaActivity.class);
+                intent.putExtra("orderId", -1);
+                startActivity(intent);
             }
-        };
-        tr.start();
-        cargarwebCategoria();
+        });
+
+        client = new AsyncHttpClient();
+        confirmedOrdersList = new ArrayList<>();
+        unconfirmedOrdersList = con.getAllOrders();
+        createRecyclerUnconfirmedOrders();
+        createRecyclerConfirmedOrders();
+        loadWebOrders();
 
         return view;
     }
 
+    private void createRecyclerUnconfirmedOrders(){
+        recyclerViewUnconfirmedOrders = view.findViewById(R.id.recylclerUnconfirmedOrders);
+        recyclerViewUnconfirmedOrders.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerViewUnconfirmedOrders.setHasFixedSize(true);
 
+        adapterUnconfirmedOrders = new adapter_unconfirmedOrders(unconfirmedOrdersList,this.getContext());
+        managerUnconfirmedOrders = new GridLayoutManager(getContext(),1);
+        recyclerViewUnconfirmedOrders.setAdapter(adapterUnconfirmedOrders);
+        recyclerViewUnconfirmedOrders.setLayoutManager(managerUnconfirmedOrders);
+    }
 
-    private void create_recyler(){
-        recyclerView = view.findViewById(R.id.recylclerhome);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        recyclerView.setHasFixedSize(true);
+    private void createRecyclerConfirmedOrders(){
+        recyclerViewConfirmedOrders = view.findViewById(R.id.recylclerConfirmedOrders);
+        recyclerViewConfirmedOrders.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerViewConfirmedOrders.setHasFixedSize(true);
 
-        adapter = new adapter_categoria(categoria_list,this.getContext());
-        manager = new GridLayoutManager(getContext(),2);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(manager);
+        adapterConfirmedOrders = new adapter_confirmedOrders(confirmedOrdersList,this.getContext());
+        managerConfirmedOrders = new GridLayoutManager(getContext(),1);
+        recyclerViewConfirmedOrders.setAdapter(adapterConfirmedOrders);
+        recyclerViewConfirmedOrders.setLayoutManager(managerConfirmedOrders);
 
     }
 
@@ -105,70 +139,70 @@ public class PedidoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    private void loadWebOrders(){
 
- private void cargarwebCategoria(){
+     Call<List<VentasOnline>> call = RetrofitCall.getApiService().getVentasByRestaurant(MainActivity.id_restaurante);
 
-     dialog = new ProgressDialog(getContext());
-     dialog.setMessage("Consultando Imagenes");
-     //RECORDAR CAMBIAR A FALSE
-     dialog.setCancelable(false);
-     dialog.show();
-
-     Call<List<CategoriaOnline>> call = RetrofitCall.getApiService().meCatergoria();
-
-     call.enqueue(new Callback<List<CategoriaOnline>>() {
+     call.enqueue(new Callback<List<VentasOnline>>() {
          @Override
-         public void onResponse(Call<List<CategoriaOnline>> call, retrofit2.Response<List<CategoriaOnline>> response) {
-             if(!response.isSuccessful()){
-                 Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
-                 return;
-             }
-
-             usu_categoria p = new usu_categoria();
-             List<CategoriaOnline> categorias = response.body();
-             if(categorias == null){
-                 dialog.dismiss();
-                 return;
-             }
+         public void onResponse(Call<List<VentasOnline>> call, retrofit2.Response<List<VentasOnline>> response) {
              try {
-
-                 for(CategoriaOnline item : categorias){
-
-                     p = new usu_categoria();
-                     p.setId(item.getIdCategoria());
-                     p.setNombre(item.getNombre());
-                     p.setDescripcion(item.getDescripcion());
-                     p.setRuta_imagen(item.getImagen());
-
-                     categoria_list.add(p);
-
-                     dialog.dismiss();
-                     adapter_categoria adapter = new adapter_categoria(categoria_list, getContext());
-                     adapter.setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View view) {
-
-                             Intent intent = new Intent(getActivity(), ProductoActivity.class);
-                             intent.putExtra("dato",categoria_list.get(recyclerView.getChildAdapterPosition(view)).getId());
-                             String mostrar = String.valueOf(MainActivity.id_usuario);
-                             intent.putExtra("id_usuario", mostrar);
-                             startActivity(intent);
-                         }
-                     });
-                     recyclerView.setAdapter(adapter);
+                 if (!response.isSuccessful()) {
+                     Log.i("mydebug", "Response" + response.toString());
+                     Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                     return;
                  }
-             }catch (Exception e) {
-                 e.printStackTrace();
-                 dialog.dismiss();
 
-                 Toast.makeText(getContext(), e.getMessage() , Toast.LENGTH_LONG).show();
+                 confirmedOrdersList = response.body();
+                 if (confirmedOrdersList == null) {
+                     return;
+                 }
+                 Log.i("mydebug", confirmedOrdersList.toString());
+                 adapter_confirmedOrders adapter = new adapter_confirmedOrders(confirmedOrdersList, getContext());
+                 recyclerViewConfirmedOrders.setAdapter(adapter);
+             }catch (Exception ex){
+                 ex.printStackTrace();
              }
          }
 
          @Override
-         public void onFailure(Call<List<CategoriaOnline>> call, Throwable t) {
+         public void onFailure(Call<List<VentasOnline>> call, Throwable t) {
              Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
          }
      });
  }
+
+    private void loadUsers(){
+
+        Call<List<UserOnline>> call = RetrofitCall.getApiService().getUsersByIdRestaurante(MainActivity.id_restaurante);
+
+        call.enqueue(new Callback<List<UserOnline>>() {
+            @Override
+            public void onResponse(Call<List<UserOnline>> call, retrofit2.Response<List<UserOnline>> response) {
+                try {
+                    if (!response.isSuccessful()) {
+                        Log.i("mydebug", "Response" + response.toString());
+                        Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (response.body() == null) {
+                        setUsers = new ArrayList<>();
+                        return;
+                    }
+
+                    setUsers = response.body();
+
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserOnline>> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

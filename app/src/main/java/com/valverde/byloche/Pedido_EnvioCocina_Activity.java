@@ -5,6 +5,7 @@ import static br.com.zbra.androidlinq.Linq.stream;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,15 +25,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.valverde.byloche.Datos.EnumsHelper;
-import com.valverde.byloche.Datos.Sqlite_Detalle_Carrito;
 import com.valverde.byloche.Datos.ValidarCedula;
 import com.valverde.byloche.Datos.utilsprefs;
-import com.valverde.byloche.Online.ClientesOnline;
-import com.valverde.byloche.Online.ResponseServer;
-import com.valverde.byloche.Online.RetrofitCall;
-import com.valverde.byloche.Online.TipoDocumentoCliente;
-import com.valverde.byloche.Online.VentasDetalleOnline;
-import com.valverde.byloche.Online.VentasOnline;
+import com.valverde.byloche.SQLite.cart.Cart;
+import com.valverde.byloche.SQLite.ingredient.Ingredient;
+import com.valverde.byloche.fragments.Online.ClientesOnline;
+import com.valverde.byloche.fragments.Online.Estado;
+import com.valverde.byloche.fragments.Online.ResponseServer;
+import com.valverde.byloche.fragments.Online.RetrofitCall;
+import com.valverde.byloche.fragments.Online.TipoDocumentoCliente;
+import com.valverde.byloche.fragments.Online.VentasDetalleOnline;
+import com.valverde.byloche.fragments.Online.VentasOnline;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
 import com.valverde.byloche.adaptadores.adapter_recyclerCarro;
@@ -51,16 +55,27 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
     ConexionSQLiteHelper con;
     Button btnEnviarCocina, btnCancelar;
     EditText edtCedula, edtNombre, edtApellido, edtTelefono;
+    TextView titleBar;
     LinearLayout lyListaProductos;
     RecyclerView recyclerDetalleCarro;
     ListView lstProductos;
     Spinner spnTidoDocumento;
     ArrayAdapter<TipoDocumentoCliente> adapterTipoDocumentoCLiente;
     AlertDialog.Builder builder;
+
+    int currentOrderId;
+    double currentOrderTotal;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pedido_enviococina);
+
+        currentOrderId = getIntent().getIntExtra("currentOrderId", -2);
+        currentOrderTotal = getIntent().getDoubleExtra("currentOrderTotal", -2);
+
+        titleBar = findViewById(R.id.titleBarTitle);
+        titleBar.setText("Pre-pedido");
 
         edtCedula = findViewById(R.id.edtCedula);
         OnFocusCedula();
@@ -98,7 +113,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                 public void onResponse(Call<List<ClientesOnline>> call, Response<List<ClientesOnline>> response) {
                     if (!response.isSuccessful()) {
                         //SE DEBBE PUBLICAR EL WEB SERVICE
-                        DialogAlerta(Pedido_EnvioCocina_Activity.this,"Alerta" , response.toString());
+                        DialogAlerta(Pedido_EnvioCocina_Activity.this,"Alerta Clientes" , response.toString());
                         return;
                     }
                     clienteOnline.addAll(response.body());
@@ -128,20 +143,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ArrayList<Sqlite_Detalle_Carrito> productosArray = new ArrayList<Sqlite_Detalle_Carrito>(){};
-                Cursor cursor = db.rawQuery("SELECT * FROM "+ Utilidades.TABLA_PEDIDO,null);
-                while (cursor.moveToNext()){
-                    Sqlite_Detalle_Carrito detalle = new Sqlite_Detalle_Carrito(){};
-                    detalle.setId(cursor.getInt(0));
-                    detalle.setId_product(cursor.getInt(1));
-                    detalle.setId_usuario(cursor.getInt(2));
-                    detalle.setId_categoria(cursor.getInt(3));
-                    detalle.setNombre_pro(cursor.getString(4));
-                    detalle.setCantidad_pro(cursor.getInt(5));
-                    detalle.setPrecio_pro(cursor.getDouble(6));
-                    detalle.setRutaimagen(cursor.getString(7));
-                    productosArray.add(detalle);
-                }
+                List<Cart> productosArray = con.getCartsByOrderId(String.valueOf(currentOrderId));
 
                 /*MODELO PARA GUARDAR*/
                 SharedPreferences prefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
@@ -155,8 +157,8 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                 String tipoDocCliente = spnTidoDocumento.getSelectedItem().toString();
                 //hay que hacer linq de sumar
                 int cantidadProductos = productosArray.size();
-                int cantidadTotal= stream(productosArray).sum((Sqlite_Detalle_Carrito p) -> p.getCantidad_pro());
-                double totalCosto = stream(productosArray).sum((Sqlite_Detalle_Carrito p) -> p.getPrecio_pro());
+                int cantidadTotal= stream(productosArray).sum((Cart p) -> p.getProductQuantity());
+                double totalCosto = stream(productosArray).sum((Cart p) -> p.getProductPrice());
                 VentasOnline ventas = new VentasOnline();
 
                 ArrayList<VentasDetalleOnline> detalle = new ArrayList<>();
@@ -199,18 +201,35 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                 xml.append("<TotalCosto>"+totalCosto+"</TotalCosto>");
                 xml.append("<ImporteRecibido>0</ImporteRecibido>");
                 xml.append("<ImporteCambio>0</ImporteCambio>");
+                xml.append("<Estado>" + Estado.INGRESADO + "</Estado>");
                 xml.append("</CABECERA>");
                 xml.append("<DETALLE>");
-
-                for (Sqlite_Detalle_Carrito item : productosArray) {
-                    double precioTotal = item.getPrecio_pro() * item.getCantidad_pro();
+                int contador = 0;
+                for (Cart item : productosArray) {
+                    contador += 1;
+                    double precioTotal = item.getProductPrice() * item.getProductQuantity();
                     xml.append("<VENTASDETALLE>");
+                    xml.append("<Orden>" + contador + "</Orden>");
                     xml.append("<IdDetalleVenta>0</IdDetalleVenta>");
                     xml.append("<IdVenta>0</IdVenta>");
-                    xml.append("<IdMenu>"+item.getId_product()+"</IdMenu>");
-                    xml.append("<Cantidad>"+item.getCantidad_pro()+"</Cantidad>");
-                    xml.append("<PrecioUnidad>"+item.getPrecio_pro()+"</PrecioUnidad>");
+                    xml.append("<IdMenu>"+item.getProductId()+"</IdMenu>");
+                    xml.append("<Cantidad>"+item.getProductQuantity()+"</Cantidad>");
+                    xml.append("<PrecioUnidad>"+item.getProductPrice()+"</PrecioUnidad>");
                     xml.append("<PrecioTotal>"+precioTotal+"</PrecioTotal>");
+                    xml.append("<Estado>" + Estado.INGRESADO + "</Estado>");
+                    List<Ingredient> ingredients = con.getIngredientsByProductIdAndCartId(String.valueOf(item.getProductId()), String.valueOf(item.getId()));
+                    for(Ingredient ingredient: ingredients){
+                        if(ingredient.isSelected()){
+                            xml.append("<VENTASDETALLEPRODUCTOS>");
+                            xml.append("<Orden>" + contador + "</Orden>");
+                            xml.append("<IdVentaDetalleProducto>0</IdVentaDetalleProducto>");
+                            xml.append("<IdDetalleVenta>0</IdDetalleVenta>");
+                            xml.append("<IdProducto>" + ingredient.getIngredientId() + "</IdProducto>");
+                            xml.append("<Cantidad>"+ ingredient.getQuantity() + "</Cantidad>");
+                            xml.append("<UnidadMedida>"+ ingredient.getMetricUnit() + "</UnidadMedida>");
+                            xml.append("</VENTASDETALLEPRODUCTOS>");
+                        }
+                    }
                     xml.append("</VENTASDETALLE>");
                 }
 
@@ -228,18 +247,20 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                                 return;
                             }
                             DialogAlerta(Pedido_EnvioCocina_Activity.this,"Estado",response.body().getMensaje());
-                            String nuevoTexto = "Hola Mundo";
+                            Intent intent = new Intent(Pedido_EnvioCocina_Activity.this, MainActivity.class);
+                            intent.putExtra("fragmentToLoad","pedidos");
+                            startActivity(intent);
                         }
 
                         @Override
                         public void onFailure(Call<ResponseServer> call, Throwable t) {
-                            DialogAlerta(Pedido_EnvioCocina_Activity.this,"Alerta",t.getMessage());
+                            DialogAlerta(Pedido_EnvioCocina_Activity.this,"Failure",t.getMessage() + xml);
                         }
                     });
 
 
                 }catch (Exception ex){
-                    DialogAlerta(Pedido_EnvioCocina_Activity.this,"Alerta",ex.getMessage());
+                    DialogAlerta(Pedido_EnvioCocina_Activity.this,"Error",ex.getMessage());
                 }
             }
         });
@@ -248,13 +269,13 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
     private void ConsultarProductosCocina() {
 
         ArrayList<String> productosArray = new ArrayList<String>(){};
-        SQLiteDatabase db = con.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+ Utilidades.TABLA_PEDIDO,null);
 
-        while (cursor.moveToNext()){
-            String concat = cursor.getString(5) + " " + cursor.getString(4);
+        List<Cart> carts = con.getCartsByOrderId(String.valueOf(currentOrderId));
+        for(Cart cart: carts){
+            String concat = cart.getProductQuantity() + " " + cart.getProductName();
             productosArray.add(concat);
         }
+        productosArray.add("Total $" + currentOrderTotal);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, productosArray);
 

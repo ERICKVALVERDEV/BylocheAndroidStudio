@@ -1,33 +1,29 @@
-package com.valverde.byloche.Online;
+package com.valverde.byloche.fragments.Online;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MenuOnline {
+public class CategoriaOnline {
 
-    private int IdMenu ;
+    private int IdCategoria ;
     private String Nombre ;
     private String Descripcion ;
-    private int IdCategoria ;
-    private String NombreCategoria ;
-    private Double Precio ;
-    private Double Descuento ;
     private String Imagen ;
     private String base64 ;
     private String extension ;
     private int IdRestaurante ;
-    private Boolean Activo ;
+    private boolean Activo ;
     private String FechaRegistro ;
     private String UsuarioRegistro ;
     private String FechaModificacion ;
     private String UsuarioModificacion ;
 
-    public int getIdMenu() {
-        return IdMenu;
+    public int getIdCategoria() {
+        return IdCategoria;
     }
 
-    public void setIdMenu(int idMenu) {
-        IdMenu = idMenu;
+    public void setIdCategoria(int idCategoria) {
+        IdCategoria = idCategoria;
     }
 
     public String getNombre() {
@@ -44,38 +40,6 @@ public class MenuOnline {
 
     public void setDescripcion(String descripcion) {
         Descripcion = descripcion;
-    }
-
-    public int getIdCategoria() {
-        return IdCategoria;
-    }
-
-    public void setIdCategoria(int idCategoria) {
-        IdCategoria = idCategoria;
-    }
-
-    public String getNombreCategoria() {
-        return NombreCategoria;
-    }
-
-    public void setNombreCategoria(String nombreCategoria) {
-        NombreCategoria = nombreCategoria;
-    }
-
-    public Double getPrecio() {
-        return Precio;
-    }
-
-    public void setPrecio(Double precio) {
-        Precio = precio;
-    }
-
-    public Double getDescuento() {
-        return Descuento;
-    }
-
-    public void setDescuento(Double descuento) {
-        Descuento = descuento;
     }
 
     public String getImagen() {
@@ -110,11 +74,11 @@ public class MenuOnline {
         IdRestaurante = idRestaurante;
     }
 
-    public Boolean getActivo() {
+    public boolean isActivo() {
         return Activo;
     }
 
-    public void setActivo(Boolean activo) {
+    public void setActivo(boolean activo) {
         Activo = activo;
     }
 

@@ -8,68 +8,24 @@
     android:orientation="vertical"
     tools:context=".Caja_Activity">
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorBarraApp"
-        android:orientation="horizontal"
+    <include
+        android:id="@+id/include"
+        layout="@layout/partial_title_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <Button
-            android:id="@+id/btn_cancelar"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:background="#00FFFFFF"
-            android:text="@string/ca_cancelar"
-            android:textColor="#504E4E" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="left"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="150dp"
-            android:gravity="center"
-            android:text="Pre - Pedido"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DDB8B8B8"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
         android:fillViewport="true"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/btnEnviaCocina"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button6">
+        app:layout_constraintTop_toBottomOf="@+id/include">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,16 +60,6 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDB8B8B8"
-                android:text="Button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,41 +73,41 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="@string/ca_txt4"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:columnCount="2"
-                    android:columnWidth="10dp"
                     android:layout_weight="0"
-                    android:minWidth="@dimen/activity_horizontal_margin"
                     android:alignmentMode="alignBounds"
-                    >
+                    android:columnWidth="10dp"
+                    android:columnCount="2"
+                    android:minWidth="@dimen/activity_horizontal_margin"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/textView21"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tipo Documento"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="0"
                         android:layout_row="0"
-                        android:layout_column="0"/>
+                        android:layout_rowWeight="1"
+                        android:layout_column="0"
+                        android:layout_columnWeight="0"
+                        android:text="Tipo Documento" />
 
                     <Spinner
                         android:id="@+id/spnTidoDocumento"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:layout_gravity="fill_horizontal"
-                        android:textAlignment="center"
                         android:layout_row="0"
+                        android:layout_column="1"
+                        android:layout_gravity="fill_horizontal"
                         android:layout_marginStart="15dp"
+                        android:backgroundTint="@color/black"
                         android:backgroundTintMode="screen"
-                        android:backgroundTint="#881212"
-                        android:layout_column="1" />
+                        android:gravity="center_horizontal"
+                        android:textAlignment="center" />
                 </GridLayout>
 
 
@@ -170,34 +116,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/ca_txt16" />
-
                     <EditText
                         android:id="@+id/edtCedula"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        android:textColorHint="#FFFFFF" />
+                        android:hint="Numero documento"
+                        android:inputType="textPersonName" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/ca_txt17" />
 
                     <EditText
                         android:id="@+id/edtNombre"
@@ -205,6 +137,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:hint="Nombre"
                         android:inputType="textPersonName" />
 
                 </LinearLayout>
@@ -213,13 +146,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Apellido:" />
 
                     <EditText
                         android:id="@+id/edtApellido"
@@ -227,6 +153,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:hint="Apellido"
                         android:inputType="textPersonName" />
 
                 </LinearLayout>
@@ -236,19 +163,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView13"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/ca_txt18" />
-
                     <EditText
                         android:id="@+id/edtTelefono"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:hint="Telefono"
                         android:inputType="phone" />
 
                 </LinearLayout>
@@ -267,16 +188,6 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/button12"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDB8B8B8"
-                android:text="Button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -290,20 +201,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="@string/ca_txt6"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
 
             </LinearLayout>
-
-            <Button
-                android:id="@+id/button14"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDB8B8B8"
-                android:text="Button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 
             <LinearLayout
@@ -340,18 +242,32 @@
 
     <Button
         android:id="@+id/btnEnviaCocina"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:background="#818080"
-        android:scrollHorizontally="false"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:text="Enviar a cocina"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_cancelar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_cancelar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:backgroundTint="@color/black"
+        android:text="Cancelar"
+
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.504" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

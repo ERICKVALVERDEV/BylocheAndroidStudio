@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.valverde.byloche.fragments.Online.MenuDetalle;
+
+import java.util.List;
+
 public class usu_producto {
 
     private int id;
@@ -15,6 +19,7 @@ public class usu_producto {
     private String dato;
     private Bitmap imagen;
     private String ruta_image;
+    private List<MenuDetalle> ingredients;
 
 
     public usu_producto() {
@@ -116,5 +121,13 @@ public class usu_producto {
 
     public void setRuta_image(String ruta_image) {
         this.ruta_image = ruta_image;
+    }
+
+    public List<MenuDetalle> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<MenuDetalle> ingredients) {
+        this.ingredients = ingredients;
     }
 }

@@ -1,4 +1,4 @@
-package com.valverde.byloche.Online;
+package com.valverde.byloche.fragments.Online;
 
 public class ClientesOnline {
 
@@ -118,5 +118,22 @@ public class ClientesOnline {
 
     public void setUsuarioModificacion(String usuarioModificacion) {
         UsuarioModificacion = usuarioModificacion;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientesOnline{" +
+                "IdCliente=" + IdCliente +
+                ", TipoDocumento='" + TipoDocumento + '\'' +
+                ", Cedula='" + Cedula + '\'' +
+                ", Nombre='" + Nombre + '\'' +
+                ", Apellido='" + Apellido + '\'' +
+                ", Telefono='" + Telefono + '\'' +
+                ", Activo=" + Activo +
+                ", FechaRegistro='" + FechaRegistro + '\'' +
+                ", UsuarioRegistro='" + UsuarioRegistro + '\'' +
+                ", FechaModificacion='" + FechaModificacion + '\'' +
+                ", UsuarioModificacion='" + UsuarioModificacion + '\'' +
+                '}';
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,11 +21,9 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.loopj.android.http.AsyncHttpClient;
 import com.valverde.byloche.Datos.usu_categoria;
-import com.valverde.byloche.Interfaz.iRestApi;
 import com.valverde.byloche.MainActivity;
-import com.valverde.byloche.Online.CategoriaOnline;
-import com.valverde.byloche.Online.ResponseServer;
-import com.valverde.byloche.Online.RetrofitCall;
+import com.valverde.byloche.fragments.Online.CategoriaOnline;
+import com.valverde.byloche.fragments.Online.RetrofitCall;
 import com.valverde.byloche.ProductoActivity;
 import com.valverde.byloche.R;
 import com.valverde.byloche.adaptadores.adapter_categoria;
@@ -34,8 +33,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +62,8 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
+        TextView titleBar = view.findViewById(R.id.titleBarTitle);
+        titleBar.setText("Pedidos en curso");
         //INICIALIZAR LOS ELEMENTOS
         //expLV = (ExpandableListView) view.findViewById(R.id.expLV);
         //listaCategoria = new ArrayList<>();
@@ -78,13 +77,10 @@ public class HomeFragment extends Fragment {
                 client = new AsyncHttpClient();
                 categoria_list = new ArrayList<>();
                 create_recyler();
-
-
             }
         };
         tr.start();
         cargarwebCategoria();
-
         return view;
     }
 
@@ -96,7 +92,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         adapter = new adapter_categoria(categoria_list,this.getContext());
-        manager = new GridLayoutManager(getContext(),2);
+        manager = new GridLayoutManager(getContext(),1);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(manager);
 

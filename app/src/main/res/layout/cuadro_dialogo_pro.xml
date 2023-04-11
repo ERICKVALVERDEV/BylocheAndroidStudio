@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Cuadro_Dialogo_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8DA9F"
-    android:id="@+id/Cuadro_Dialogo_id">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +54,10 @@
                 android:id="@+id/txt_nombre_pro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/alegreya_sans"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="@string/app_name"
+                android:text="Nombre"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -64,12 +65,60 @@
                 android:id="@+id/txt_precio_pro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/alegreya_sans"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="@string/app_name"
+                android:text="Precio"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detalles"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:maxLines="3"
+            android:minLines="3"
+            android:scrollbars="vertical"
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingredientes"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredientsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extras"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/extrasRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,7 +159,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
                 android:text="Agregar" />
         </LinearLayout>
 

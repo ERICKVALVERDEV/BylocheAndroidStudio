@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valverde.byloche.LoginActivity;
@@ -59,7 +60,8 @@ public class PerfilFragment extends Fragment {
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_perfil, container, false);
-
+        TextView titleBar = view.findViewById(R.id.titleBarTitle);
+        titleBar.setText("Linea inventario");
         prefs = this.getActivity().getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         btn_cerrarsesion = (Button)view.findViewById(R.id.but7);

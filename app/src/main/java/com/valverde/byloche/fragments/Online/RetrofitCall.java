@@ -1,4 +1,4 @@
-package com.valverde.byloche.Online;
+package com.valverde.byloche.fragments.Online;
 
 
 import com.google.gson.Gson;
@@ -15,8 +15,8 @@ public class RetrofitCall {
 
     private static iRestApi API_SERVICE;
 
-    private static final String BASE_URL = "http://192.168.100.95/";
-    private static final String BASE_URL1 = "http://192.168.100.95:9092";
+    private static final String BASE_URL = "http://192.168.100.39/";
+    private static final String BASE_URL1 = "http://192.168.100.39:9092";
 
     public static iRestApi getApiService(){
 

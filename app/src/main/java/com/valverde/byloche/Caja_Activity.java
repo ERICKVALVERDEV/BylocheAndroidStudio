@@ -49,7 +49,7 @@ public class Caja_Activity extends AppCompatActivity {
     private CheckBox check_terminos;
     private RadioButton radio_efectivo;
     private EditText edt_valor_suelto, edt_comentario, edt_Nombre, edt_Telefono;
-    private TextView txt_subtotal, txt_costo_envio;
+    private TextView txt_subtotal, txt_costo_envio, titleBar;
     private Switch switch_valor_exacto;
     private usu_registro perfilList;
     private ArrayList<usu_registro> perfilArrary;

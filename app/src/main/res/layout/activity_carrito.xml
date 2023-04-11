@@ -8,91 +8,76 @@
     android:background="@color/colorPrimaryApp"
     tools:context=".CarritoActivity">
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/partial_title_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!--#818080 -->
-    <Button
-        android:id="@+id/btn_continuar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="4dp"
-        android:background="@drawable/bordes_negros_fondo_oscuro"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/img_volver"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorBarraApp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <ImageView
-            android:id="@+id/img_volver"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
-            app:srcCompat="@drawable/ic_back_black_24dp" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="left"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="41dp"
-            android:layout_toStartOf="@+id/btn_vaciar"
-            android:gravity="center"
-            android:text="@string/ca_titulo"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/btn_vaciar"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="0dp"
-            android:background="#00F6E5C0"
-            android:text="@string/ca_vaciar"
-            app:layout_constraintEnd_toStartOf="@+id/textView9" />
-    </RelativeLayout>
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:srcCompat="@drawable/ic_back_black_24dp" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_weight="0"
-        android:background="#DD888787"
+        android:id="@+id/btn_vaciar"
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:text="@string/ca_vaciar"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <TextView
+        android:id="@+id/orderTable"
+        android:layout_width="55dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Mesa:"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        tools:text="Button" />
+        app:layout_constraintTop_toBottomOf="@+id/img_volver" />
+
+    <Spinner
+        android:id="@+id/spinnerTables"
+        android:layout_width="136dp"
+        android:layout_height="28dp"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="fill_horizontal"
+        android:backgroundTint="@color/black"
+        android:backgroundTintMode="screen"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        app:layout_constraintStart_toEndOf="@+id/orderTable"
+        app:layout_constraintTop_toBottomOf="@+id/img_volver" />
 
     <LinearLayout
         android:id="@+id/linearLayout_vacio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/btn_vaciar">
 
         <ImageView
             android:id="@+id/img_foto"
@@ -122,34 +107,60 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout_lista"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="60dp"
-        android:orientation="vertical"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerDetalleCarro"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/totalPrice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderTable"
+        app:layout_constraintVertical_bias="0.827" />
+
+    <TextView
+        android:id="@+id/totalPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Total...............................................................$5.00"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_continuar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_continuar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Continuar"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveLocal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnSaveLocal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:backgroundTint="@color/black"
+        android:text="Guardar local"
+
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        app:layout_constraintVertical_bias="0.0">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerDetalleCarro"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"/>
-<!--
-        <ListView
-            android:id="@+id/listViewDetalleCarro"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp" />
-            -->
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

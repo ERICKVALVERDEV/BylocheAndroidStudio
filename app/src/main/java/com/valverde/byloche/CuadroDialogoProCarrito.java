@@ -14,12 +14,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import com.valverde.byloche.Datos.usu_producto;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
+import com.valverde.byloche.SQLite.cart.Cart;
+import com.valverde.byloche.SQLite.ingredient.Ingredient;
+import com.valverde.byloche.adaptadores.adapter_ingredients;
+import com.valverde.byloche.adaptadores.adapter_ingredients_cart;
+import com.valverde.byloche.fragments.Online.MenuDetalle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CuadroDialogoProCarrito extends Dialog {
 
@@ -29,6 +40,8 @@ public class CuadroDialogoProCarrito extends Dialog {
     int foco1, foco2;
     int valor;
     final EditText paso;
+    public static Map<Ingredient,Boolean> ingredientsSelected;
+
     public  interface FinalizoDialogo {
         void ResultCuadroDialogo(String paso);
         void ResltValor(int[] valor);
@@ -36,12 +49,11 @@ public class CuadroDialogoProCarrito extends Dialog {
 
     private FinalizoDialogo interfaz;
 
-    @SuppressLint("SetTextI18n")
     public CuadroDialogoProCarrito(final Context context, FinalizoDialogo actividad) {
         super(context);
 
         interfaz = actividad;
-        //CarritoActivity.adapter.notifyDataSetChanged();
+        // CarritoActivity.adapter.notifyDataSetChanged();
 
         final Dialog dialogo = new Dialog(context);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -60,10 +72,22 @@ public class CuadroDialogoProCarrito extends Dialog {
         ImageView cerrar = dialogo.findViewById(R.id.btn_cerrar);
         ImageView imgproduct = dialogo.findViewById(R.id.img_producto);
 
+        ingredientsSelected = new HashMap<>();
+        for(Ingredient ingredient: CarritoActivity.setIngredients){
+            ingredientsSelected.put(ingredient, ingredient.isSelected());
+            Log.i("mydebug", ingredient.toString());
+        }
+
+        RecyclerView ingredientsRecycler = dialogo.findViewById(R.id.ingredientsRecycler);
+        ingredientsRecycler.setLayoutManager(new LinearLayoutManager(context));
+        adapter_ingredients_cart ingredientsAdapter = new adapter_ingredients_cart(CarritoActivity.setIngredients, context);
+        ingredientsRecycler.setAdapter(ingredientsAdapter);
+
         String ip = context.getString(R.string.rutaImagenes);
-            Picasso.get().load(ip+CarritoActivity.RutaImagen).into(imgproduct);
-            titulo.setText(CarritoActivity.setNombre_pro + " ");
-            precio.setText("$"+ String.valueOf(CarritoActivity.setprecio));
+        Picasso.get().load(ip+CarritoActivity.RutaImagen).into(imgproduct);
+        titulo.setText(String.valueOf(CarritoActivity.setNombre_pro));
+        String priceText = String.format(context.getString(R.string.price), String.valueOf(CarritoActivity.setprecio));
+        precio.setText(priceText);
 
 
         final int[] valor = {1};
@@ -73,17 +97,20 @@ public class CuadroDialogoProCarrito extends Dialog {
             @Override
             public void onClick(View view) {
                 int m = Integer.parseInt(paso.getText().toString());
-                    m++;
-                    paso.setText(String.valueOf(m));
+                m++;
+                paso.setText(String.valueOf(m));
             }
         });
+
         menos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int m = Integer.parseInt(paso.getText().toString());
-                if(m >= 1){
+                if(m > 1){
                     m--;
                     paso.setText(String.valueOf(m));
+                }else{
+                    Snackbar.make(dialogo.findViewById(R.id.Cuadro_Dialogo_id),"Minimo 1 producto", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -99,8 +126,7 @@ public class CuadroDialogoProCarrito extends Dialog {
             public void onClick(View view) {
                 interfaz.ResultCuadroDialogo(paso.getText().toString());
 
-                ExisteConsulta();
-                ProductoActivity.img_carrito.setImageResource(R.drawable.logo4);
+                ModificarCant();
                 CarritoActivity.adapter3.notifyDataSetChanged();
                 valor[0] = 1;
                 dialogo.dismiss();
@@ -110,67 +136,22 @@ public class CuadroDialogoProCarrito extends Dialog {
         });
         dialogo.show();
     }
+
     private void ModificarCant() {
         try {
-            SQLiteDatabase db = con.getWritableDatabase();
-
-            String alter = "UPDATE " + Utilidades.TABLA_PEDIDO + " SET " + Utilidades.CAMPO_CANTIDAD_PRO + " = "
-                    +paso.getText().toString()+" WHERE " + Utilidades.CAMPO_ID_PRODUCTO + " = "+CarritoActivity.setIdProducto;
-            db.execSQL(alter);
-            db.close();
+            con.updateCartProductQuantity(CarritoActivity.setCurrentOrderId, CarritoActivity.setIdProducto, paso.getText().toString());
+            Log.i("mydebug", "ingredientsSelected in dialogo: " + ingredientsSelected.toString());
+            for(Ingredient ingredient: ingredientsSelected.keySet()){
+                // TODO use update method
+                Log.i("mydebug", String.valueOf(ingredient.getId()));
+                Log.i("mydebug", String.valueOf(ingredient.isSelected()));
+                Log.i("mydebug", String.valueOf(ingredientsSelected.get(ingredient)));
+                con.updateIngredientIsSelected(ingredient.getId(), ingredientsSelected.get(ingredient)? "1" : "0");
+                Log.i("mydebug", "ingredient updated: " + con.getIngredientsById(String.valueOf(ingredient.getId())).toString());
+            }
         } catch (Exception ex) {
             Toast.makeText(CuadroDialogoProCarrito.super.getContext(), ex.toString(), Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void RegistarProducto(){
-        try {
-            SQLiteDatabase db = con.getWritableDatabase();
-
-            String insert = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
-                    +","+Utilidades.CAMPO_ID_CATEGORIA+","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO+","+Utilidades.CAMPO_RUTA_IMAGEN+" )VALUES ("
-                    + CarritoActivity.setIdProducto+","
-                    +CarritoActivity.setIdUsuario+","
-                    +CarritoActivity.setCategoria+",'"
-                    +CarritoActivity.setNombre_pro+"',"
-                    +paso.getText().toString()
-                    +","+CarritoActivity.setprecio+",'"
-                    +CarritoActivity.RutaImagen+"')";
-
-            String insert2 = "INSERT INTO "+ Utilidades.TABLA_PEDIDO+" ("+Utilidades.CAMPO_ID_PRODUCTO+","+Utilidades.CAMPO_ID_USUARIO
-                    +","+Utilidades.CAMPO_NOMBRE_PRO+","+Utilidades.CAMPO_CANTIDAD_PRO+","+Utilidades.CAMPO_PRECIO_PRO
-                    +") VALUES (2,3,'papa',6,5)";
-
-            db.execSQL(insert);
-
-            db.close();
-        }catch (Exception e){
-            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void ExisteConsulta(){
-        SQLiteDatabase db = con.getReadableDatabase();
-        String parametro = String.valueOf(ProductoActivity.setIdProducto);
-        try {
-            Cursor cursor = db.rawQuery("SELECT " + Utilidades.CAMPO_ID_PRODUCTO + " from " + Utilidades
-                    .TABLA_PEDIDO + " WHERE " + Utilidades.CAMPO_ID_PRODUCTO + " = " + parametro, null);
-            int idProducto = 0;
-            if(!(cursor.getCount() == 0)){
-                while (cursor.moveToNext()){
-                    idProducto = cursor.getInt(0);
-                }
-                if(ProductoActivity.setIdProducto == idProducto){
-                    ModificarCant();
-                }
-            }else{
-                RegistarProducto();
-            }
-
-        }catch (Exception e){
-            Log.d("Salida","" + e.getMessage());
-        }
-    }
-
 
 }

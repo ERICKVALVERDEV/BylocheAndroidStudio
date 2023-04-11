@@ -23,4 +23,14 @@
 
     <color name="darkGreen">#438B49</color>
     <color name="lightGreen">#8BC34A</color>
+
+
+    <!-- Colors New Theme -->
+    <color name="red">#BA2918</color>
+    <color name="grey">#B8B8B8</color>
+    <color name="black">#1D1C22</color>
+    <color name="white">#FFFBFA</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
 </resources>

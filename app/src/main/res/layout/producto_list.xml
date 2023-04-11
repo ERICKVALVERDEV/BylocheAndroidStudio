@@ -1,74 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    android:elevation="6dp"
-    app:cardCornerRadius="6dp"
-    android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#E4D3AE">
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp"
+        app:contentPadding="@dimen/card_view_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/grey"
+        app:strokeWidth="1dp">
 
-        <ImageView
-            android:id="@+id/imageViewProducto"
-            android:layout_width="180dp"
-            android:layout_height="150dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            app:srcCompat="@drawable/imagennodisponible" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/imageViewProducto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/imagennodisponible" />
 
             <TextView
                 android:id="@+id/txt_nombre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/moon_bold"
-                android:textColor="#000000"
-                android:text="TextView" />
+                android:layout_width="236dp"
+                android:layout_height="23dp"
+                android:layout_marginStart="20dp"
+                android:text="Hamburguesa Doble"
+                android:textColor="@color/black"
+                android:textSize="@dimen/card_view_title_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/imageViewProducto"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_categoria"
+                android:layout_width="70dp"
+                android:layout_height="13dp"
+                android:layout_marginStart="20dp"
+                android:text="Hamburguesas"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/imageViewProducto"
+                app:layout_constraintTop_toBottomOf="@+id/txt_nombre" />
 
             <TextView
                 android:id="@+id/txt_precio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/moon_bold"
-                android:textColor="#000000"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/txt_categoria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/moon_bold"
-                android:textColor="#000000"
-                android:text="TextView" />
+                android:layout_marginStart="20dp"
+                android:text="$4.50"
+                android:textColor="@color/black"
+                android:textSize="@dimen/card_view_plates_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageViewProducto"
+                app:layout_constraintTop_toBottomOf="@+id/txt_nombre"
+                app:layout_constraintVertical_bias="0.252" />
 
             <TextView
                 android:id="@+id/txt_descripcion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/moon_bold"
-                android:textColor="#000000"
-                android:text="TextView" />
-        </LinearLayout>
+                android:layout_width="236dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="8dp"
+                android:text="Hamburguesa sencilla con doble carne, tomate, lechuga, pepinillos, cebolla, huevo"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/imageViewProducto"
+                app:layout_constraintTop_toBottomOf="@+id/txt_precio" />
 
-    </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </com.google.android.material.card.MaterialCardView>
 
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

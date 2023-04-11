@@ -30,6 +30,7 @@ import com.valverde.byloche.fragments.PerfilFragment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     private SharedPreferences prefs;
-    public static int id_usuario, tipo_usuario;
+    public static int id_usuario, tipo_usuario, id_restaurante;
 
 
     @Override
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }*/
-        setTheme(R.style.AppTheme);
+        //setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //EL NOMBRE Prefenrences es aquel que ya creamos y estan guardados los datos
@@ -65,9 +66,14 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.botoomNav);
 
         if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new HomeFragment()).commit();
+        }
+        if(Objects.equals(getIntent().getStringExtra("fragmentToLoad"), "pedidos")){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new PedidoFragment()).commit();
+            bottomNavigationView.getMenu().getItem(1).setChecked(true);
         }
         id_usuario = utilsprefs.leerDatosIdUsuarioPreferencias(prefs);
+        id_restaurante = utilsprefs.leerDatosIdRestaurantePreferencias(prefs);
         tipo_usuario =utilsprefs.leerDatosTipoUsuario(prefs);
         //Toast.makeText(this, String.valueOf(id_user), Toast.LENGTH_SHORT).show();
 

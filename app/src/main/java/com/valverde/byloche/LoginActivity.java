@@ -20,8 +20,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.valverde.byloche.Datos.utilsprefs;
 
 import com.valverde.byloche.Datos.usu_registro;
-import com.valverde.byloche.Online.RetrofitCall;
-import com.valverde.byloche.Online.UsuarioLogin;
+import com.valverde.byloche.fragments.Online.RetrofitCall;
+import com.valverde.byloche.fragments.Online.UsuarioLogin;
 
 import java.util.ArrayList;
 import java.util.List;

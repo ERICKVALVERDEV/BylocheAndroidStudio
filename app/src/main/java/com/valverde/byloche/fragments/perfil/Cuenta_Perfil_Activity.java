@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -40,6 +41,9 @@ public class Cuenta_Perfil_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cuenta__perfil_);
+
+        TextView titleBar = findViewById(R.id.titleBarTitle);
+        titleBar.setText(R.string.cf_datos);
 
         edt_nombre = findViewById(R.id.edt_nombre);
         edt_apellido = findViewById(R.id.edt_apellido);

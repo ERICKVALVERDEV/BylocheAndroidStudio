@@ -1,4 +1,4 @@
-package com.valverde.byloche.Online;
+package com.valverde.byloche.fragments.Online;
 
 import com.google.gson.annotations.SerializedName;
 
