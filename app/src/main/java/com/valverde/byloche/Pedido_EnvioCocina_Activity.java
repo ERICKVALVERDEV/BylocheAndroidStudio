@@ -247,6 +247,14 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                                 return;
                             }
                             DialogAlerta(Pedido_EnvioCocina_Activity.this,"Estado",response.body().getMensaje());
+
+                            // Clearing data no longer needed from SQLite
+                            con.deleteOrder(String.valueOf(currentOrderId));
+                            con.deleteCartByOrderId(String.valueOf(currentOrderId));
+                            for (Cart cart : productosArray) {
+                                con.deleteIngredientByCartId(String.valueOf(cart.getId()));
+                            }
+
                             Intent intent = new Intent(Pedido_EnvioCocina_Activity.this, MainActivity.class);
                             intent.putExtra("fragmentToLoad","pedidos");
                             startActivity(intent);

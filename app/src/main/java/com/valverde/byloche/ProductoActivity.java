@@ -50,7 +50,7 @@ public class ProductoActivity extends AppCompatActivity
     List<Cart> listCarrito;
 
     int dato;
-    int currentOrderId;
+    public static int currentOrderId;
     String id_user;
     RecyclerView.Adapter madapter;
     RecyclerView recyclerView;
@@ -78,7 +78,7 @@ public class ProductoActivity extends AppCompatActivity
         //txt_paso = findViewById(R.id.txt_mostar);
         img_carrito = findViewById(R.id.img_carrito);
         dato = getIntent().getIntExtra("dato", 0);
-        currentOrderId = getIntent().getIntExtra("currentOrderId", 0);
+        currentOrderId = getIntent().getIntExtra("currentOrderId", -1);
         id_user = getIntent().getStringExtra("id_usuario");
         setIdUsuario = Integer.parseInt(id_user);
         setCategoria = dato;
@@ -91,6 +91,10 @@ public class ProductoActivity extends AppCompatActivity
         recyclerView.setHasFixedSize(true);
         madapter = new adapter_recyclerview(productlist, ProductoActivity.this);
         recyclerView.setAdapter(madapter);
+
+        if(currentOrderId != -1){
+            img_carrito.setVisibility(View.INVISIBLE);
+        }
 
         cargarWebService();
         ConsultarListarProducto();

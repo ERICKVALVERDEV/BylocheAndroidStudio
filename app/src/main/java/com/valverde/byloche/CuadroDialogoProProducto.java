@@ -3,6 +3,7 @@ package com.valverde.byloche;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -127,6 +128,10 @@ public class CuadroDialogoProProducto extends Dialog {
                     existeConsulta();
                     ProductoActivity.img_carrito.setImageResource(R.drawable.logo4);
                     dialogo.dismiss();
+                    Intent i_carrito = new Intent(getContext(), CarritoActivity.class);
+                    i_carrito.putExtra("currentOrderId",ProductoActivity.currentOrderId);
+                    i_carrito.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    getContext().startActivity(i_carrito);
                 } else {
                     Snackbar.make(dialogo.findViewById(R.id.Cuadro_Dialogo_id), "Solo 10 productos por pedido", Snackbar.LENGTH_SHORT).show();
                     paso.setText("10");
@@ -141,7 +146,7 @@ public class CuadroDialogoProProducto extends Dialog {
 
     private void ModificarCant() {
         try {
-            con.updateCartProductQuantity(-1, ProductoActivity.setIdProducto, paso.getText().toString());
+            con.updateCartProductQuantity(ProductoActivity.currentOrderId, ProductoActivity.setIdProducto, paso.getText().toString());
         } catch (Exception e) {
             Toast.makeText(CuadroDialogoProProducto.super.getContext(), e.toString(), Toast.LENGTH_SHORT).show();
         }
@@ -174,7 +179,7 @@ public class CuadroDialogoProProducto extends Dialog {
                     ProductoActivity.setRutaImagen,
                     "En espera",
                     detalles.toString(),
-                    -1);
+                    ProductoActivity.currentOrderId);
             // orderId = -1 => aun no se asigna a un pedido, porque aun no se guarda el pedido.
             long cartId = con.saveCartLocal(newCart);
             Log.i("mydebug",newCart.toString());
@@ -200,7 +205,7 @@ public class CuadroDialogoProProducto extends Dialog {
 
     private void existeConsulta() {
         try {
-            List<Cart> carts = con.getCartsByProductIdAndOrderId(String.valueOf(ProductoActivity.setIdProducto), "-1");
+            List<Cart> carts = con.getCartsByProductIdAndOrderId(String.valueOf(ProductoActivity.setIdProducto), String.valueOf(ProductoActivity.currentOrderId));
             if (carts.size() == 0) {
                 RegistarProducto();
             } else {

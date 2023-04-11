@@ -8,6 +8,23 @@
     android:background="@color/colorPrimaryApp"
     tools:context=".CarritoActivity">
 
+    <TextView
+        android:id="@+id/addPlateButton"
+        android:layout_width="158dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:drawablePadding="5sp"
+        android:text="Agregar plato"
+        android:textAlignment="textStart"
+        android:textColor="#1D1C22"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_plus"
+        app:layout_constraintStart_toEndOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_volver" />
+
     <include
         android:id="@+id/include"
         layout="@layout/partial_title_bar"
@@ -42,30 +59,32 @@
 
     <TextView
         android:id="@+id/orderTable"
-        android:layout_width="55dp"
-        android:layout_height="27dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="61dp"
+        android:layout_height="21dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="sans-serif-medium"
         android:text="Mesa:"
         android:textAlignment="viewStart"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_volver" />
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/spinnerTables"
+        app:layout_constraintTop_toBottomOf="@+id/btn_vaciar" />
 
     <Spinner
         android:id="@+id/spinnerTables"
-        android:layout_width="136dp"
-        android:layout_height="28dp"
+        android:layout_width="128dp"
+        android:layout_height="22dp"
         android:layout_row="0"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/black"
         android:backgroundTintMode="screen"
         android:gravity="center_horizontal"
         android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@+id/orderTable"
-        app:layout_constraintTop_toBottomOf="@+id/img_volver" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_vaciar" />
 
     <LinearLayout
         android:id="@+id/linearLayout_vacio"
@@ -116,7 +135,7 @@
         app:layout_constraintBottom_toTopOf="@+id/totalPrice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/orderTable"
+        app:layout_constraintTop_toBottomOf="@+id/addPlateButton"
         app:layout_constraintVertical_bias="0.827" />
 
     <TextView

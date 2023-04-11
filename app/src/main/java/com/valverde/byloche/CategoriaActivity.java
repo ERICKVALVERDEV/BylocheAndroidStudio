@@ -49,7 +49,7 @@ public class CategoriaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_categoria);
         context= this;
 
-        currentOrderId = getIntent().getIntExtra("orderId", 0);
+        currentOrderId = getIntent().getIntExtra("orderId", -1);
 
         TextView titleBar = findViewById(R.id.titleBarTitle);
         titleBar.setText("Pedidos");

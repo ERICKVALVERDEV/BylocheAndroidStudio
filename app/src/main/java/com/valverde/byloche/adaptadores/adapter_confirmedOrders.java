@@ -63,7 +63,6 @@ public class adapter_confirmedOrders extends RecyclerView.Adapter<adapter_confir
         holder.sendOrderButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                // TODO: Mostrar Dialog con Meseros
                 new DialogUsers(context);
             }
         });

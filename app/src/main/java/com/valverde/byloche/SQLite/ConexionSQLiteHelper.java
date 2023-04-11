@@ -239,6 +239,13 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
                 new String[]{cartId});
     }
 
+    public int deleteCartByOrderId(String orderId) {
+        return getWritableDatabase().delete(
+                CartEntry.TABLE_NAME,
+                CartEntry.ID_PEDIDO + " LIKE ?",
+                new String[]{orderId});
+    }
+
     public int deleteCartsByIdAndProductId(String cartId, String productId) {
         return getWritableDatabase().delete(
                 CartEntry.TABLE_NAME,
@@ -328,4 +335,12 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
                 IngredientEntry._ID + " = " + ingredientId;
         getWritableDatabase().execSQL(query);
     }
+
+    public int deleteIngredientByCartId(String cardId) {
+        return getWritableDatabase().delete(
+                IngredientEntry.TABLE_NAME,
+                IngredientEntry.ID_CARRITO + " LIKE ?",
+                new String[]{cardId});
+    }
+
 }

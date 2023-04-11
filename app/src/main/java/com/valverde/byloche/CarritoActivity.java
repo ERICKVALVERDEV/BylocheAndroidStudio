@@ -49,7 +49,7 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
     public static List<Cart> listCarrito;
     ConexionSQLiteHelper con;
 
-    TextView totalPrice, titleBar;
+    TextView totalPrice, titleBar, addPlateButton;
     Button btn_vaciar, btn_continuar, btnSaveLocal;
     LinearLayout linearLayoutVacio;
     ImageView img_volver;
@@ -93,6 +93,7 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
         btn_continuar = findViewById(R.id.btn_continuar);
         totalPrice = findViewById(R.id.totalPrice);
         spinnerTables = findViewById(R.id.spinnerTables);
+        addPlateButton = findViewById(R.id.addPlateButton);
 
         //listViewDetalleCarrito = findViewById(R.id.listViewDetalleCarro);
         linearLayoutVacio = findViewById(R.id.linearLayout_vacio);
@@ -105,10 +106,23 @@ public class CarritoActivity extends AppCompatActivity implements CuadroDialogoP
 
         get_iduser = getIntent().getStringExtra("id_usuario2");
 
+        if(currentOrderId != -1){
+            btn_vaciar.setVisibility(View.INVISIBLE);
+        }
+
         btn_vaciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vaciar_Carrito();
+            }
+        });
+
+        addPlateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CategoriaActivity.class);
+                intent.putExtra("orderId", currentOrderId);
+                startActivity(intent);
             }
         });
 

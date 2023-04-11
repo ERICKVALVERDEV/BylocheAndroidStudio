@@ -108,14 +108,14 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
         Thread tr = new Thread(){
             @Override
             public void run() {
-                loadOrderInDatabse();
+                ConsultarClientes();
             }
         };
         tr.start();
 
         btnEnviarCocina = findViewById(R.id.btnEnviaCocina);
+
         ConsultarProductosCocina();
-        ConsultarClientes();
         EnviarACocina();
         cancelarEnvio();
     }
@@ -134,7 +134,7 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
                         return;
                     }
                     clienteOnline.addAll(response.body());
-
+                    loadOrderInDatabse();
                 }
 
                 @Override
@@ -223,7 +223,23 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
                         DialogAlerta(Pedido_EnvioCocinaUpdate_Activity.this,"Alerta",response.toString());
                         return;
                     }
+
+                    if(response.body() == null){
+                        return;
+                    }
+
                     orderInDatabase = response.body();
+
+                    cliente = stream(clienteOnline).where(e -> Objects.equals(e.getCedula(), orderInDatabase.getCodigoCliente())).firstOrNull();
+                    if(cliente != null){
+                        TipoDocumentoCliente tipo = EnumsHelper.ConvertirTipoDocumentoClienteCodigo(cliente.getTipoDocumento());
+                        int spinnerPosition = adapterTipoDocumentoCLiente.getPosition(tipo);
+                        spnTidoDocumento.setSelection(spinnerPosition);
+                        edtCedula.setText(cliente.getCedula());
+                        edtNombre.setText(cliente.getNombre());
+                        edtApellido.setText(cliente.getApellido());
+                        edtTelefono.setText(cliente.getTelefono());
+                    }
                 }
 
                 @Override
