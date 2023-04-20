@@ -15,7 +15,7 @@ public class VentasOnline {
     private	double	ImporteCambio;
     private	int	IdUsuario;
     private	int	IdRestaurante;
-    private	String	Mesa;
+    private	int	IdMesa;
     private	String	CodigoCliente;
     private ArrayList<VentasDetalleOnline> DetalleVenta;
     private	boolean	Activo;
@@ -127,12 +127,12 @@ public class VentasOnline {
         Estado = estado;
     }
 
-    public String getMesa() {
-        return Mesa;
+    public int getIdMesa() {
+        return IdMesa;
     }
 
-    public void setMesa(String mesa) {
-        Mesa = mesa;
+    public void setIdMesa(int idMesa) {
+        IdMesa = idMesa;
     }
 
     public boolean isActivo() {
@@ -173,7 +173,7 @@ public class VentasOnline {
                 ", ImporteCambio=" + ImporteCambio +
                 ", IdUsuario=" + IdUsuario +
                 ", IdRestaurante=" + IdRestaurante +
-                ", Mesa='" + Mesa + '\'' +
+                ", IdMesa='" + IdMesa + '\'' +
                 ", CodigoCliente='" + CodigoCliente + '\'' +
                 ", DetalleVenta=" + DetalleVenta +
                 ", Activo=" + Activo +

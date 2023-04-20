@@ -18,6 +18,10 @@ public class Cart {
     private String productState;
     private String productDetails;
     private int orderId;
+    private String description;
+    private String extras;
+    private int idMenu;
+    private String extrasPrices;
 
     public Cart(){
     }
@@ -47,6 +51,10 @@ public class Cart {
         values.put(CartEntry.ESTADO_PRO, productState);
         values.put(CartEntry.DETALLES_PRO, productDetails);
         values.put(CartEntry.ID_PEDIDO, orderId);
+        values.put(CartEntry.DESCRIPCION, description);
+        values.put(CartEntry.EXTRAS, extras);
+        values.put(CartEntry.ID_MENU, idMenu);
+        values.put(CartEntry.EXTRAS_PRECIOS, extrasPrices);
         return values;
     }
 
@@ -138,10 +146,43 @@ public class Cart {
         this.orderId = orderId;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getExtras() {
+        return extras;
+    }
+
+    public void setExtras(String extras) {
+        this.extras = extras;
+    }
+
+    public int getIdMenu() {
+        return idMenu;
+    }
+
+    public void setIdMenu(int idMenu) {
+        this.idMenu = idMenu;
+    }
+
+    public String getExtrasPrices() {
+        return extrasPrices;
+    }
+
+    public void setExtrasPrices(String extrasPrices) {
+        this.extrasPrices = extrasPrices;
+    }
+
     @Override
     public String toString() {
         return "Cart{" +
-                "productId=" + productId +
+                "id=" + id +
+                ", productId=" + productId +
                 ", userId=" + userId +
                 ", categoryId=" + categoryId +
                 ", productName='" + productName + '\'' +
@@ -151,6 +192,10 @@ public class Cart {
                 ", productState='" + productState + '\'' +
                 ", productDetails='" + productDetails + '\'' +
                 ", orderId=" + orderId +
+                ", description='" + description + '\'' +
+                ", extras='" + extras + '\'' +
+                ", idMenu=" + idMenu +
+                ", extrasPrices='" + extrasPrices + '\'' +
                 '}';
     }
 }

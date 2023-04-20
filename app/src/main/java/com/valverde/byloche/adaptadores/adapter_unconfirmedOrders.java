@@ -54,6 +54,7 @@ public class adapter_unconfirmedOrders extends RecyclerView.Adapter<adapter_unco
                 Intent intent = new Intent(context, CarritoActivity.class);
                 intent.putExtra("currentOrderId", (int) ordersList.get(holder.getAdapterPosition()).getId());
                 intent.putExtra("currentTable", ordersList.get(holder.getAdapterPosition()).getTable());
+                intent.putExtra("currentTableId", ordersList.get(holder.getAdapterPosition()).getTableId());
                 context.startActivity(intent);
             }
         });

@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +26,11 @@ import com.valverde.byloche.Datos.usu_producto;
 import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.cart.Cart;
 import com.valverde.byloche.adaptadores.adapter_recyclerview;
+import com.valverde.byloche.fragments.Online.ExtraOnline;
 import com.valverde.byloche.fragments.Online.MenuDetalle;
 import com.valverde.byloche.fragments.Online.MenuOnline;
 import com.valverde.byloche.fragments.Online.RetrofitCall;
+import com.valverde.byloche.fragments.Online.VentasDetalleOnline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +64,15 @@ public class ProductoActivity extends AppCompatActivity
     int suma = 0;
     public static String setRutaImagen, setNombre_pro;
     public static double setprecio;
-    public static int setIdProducto, setIdUsuario, setCantidad, setCategoria;
+    public static int setIdProducto, setIdUsuario, setCantidad, setCategoria, setIdMenu;
     public static List<MenuDetalle> setIngredients;
+    public static List<ExtraOnline> setExtras;
+    public static String setDescripcion;
+    List<ExtraOnline> extras;
     Context context;
+
+    public static boolean isOnline;
+    public static List<VentasDetalleOnline> currentPlatesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +91,16 @@ public class ProductoActivity extends AppCompatActivity
         id_user = getIntent().getStringExtra("id_usuario");
         setIdUsuario = Integer.parseInt(id_user);
         setCategoria = dato;
+
+        isOnline = getIntent().getBooleanExtra("isOnline", false);
+        if(isOnline){
+            Bundle bundle = getIntent().getExtras();
+            currentPlatesList = (List<VentasDetalleOnline>)bundle.getSerializable("CURRENT_PLATES_LIST");
+            Log.i("mydebug", "CurrentOrderId: " + currentOrderId);
+            Log.i("mydebug", "IdOnline: " + isOnline);
+            Log.i("mydebug", "CurrentPlatesList recibido en ProductActivity: " + currentPlatesList.toString());
+        }
+
 
         con = new ConexionSQLiteHelper(this, "bd_registar_pro", null, 1);
         client = new AsyncHttpClient();
@@ -148,7 +167,7 @@ public class ProductoActivity extends AppCompatActivity
                     return;
                 }
                 List<MenuOnline> menus = response.body();
-                usu_producto p = new usu_producto();
+                usu_producto p;
                 try {
                     for (MenuOnline item : menus) {
                         p = new usu_producto();
@@ -160,31 +179,32 @@ public class ProductoActivity extends AppCompatActivity
                         p.setDisponible(item.getActivo() ? 1 : 2);
                         p.setRuta_image(item.getImagen());
                         p.setIngredients(item.getDetalleMenu());
+                        p.setDescription(item.getDescripcionDetallada());
                         productlist.add(p);
-
-                        adapter_recyclerview adapter = new adapter_recyclerview(productlist, ProductoActivity.this);
-                        recyclerView.setAdapter(adapter);
-
-                        adapter.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                setIdProducto = productlist.get(recyclerView.getChildAdapterPosition(view)).getId();
-                                setRutaImagen = productlist.get(recyclerView.getChildAdapterPosition(view)).getRuta_image();
-                                setNombre_pro = productlist.get(recyclerView.getChildAdapterPosition(view)).getNombre();
-                                setCantidad = 1;
-                                setprecio = productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio();
-                                setIngredients = productlist.get(recyclerView.getChildAdapterPosition(view)).getIngredients();
-                                Log.i("mydebug", setIngredients.toString());
-                                new CuadroDialogoProProducto(context, ProductoActivity.this);
-                            }
-                        });
                     }
+                    adapter_recyclerview adapter = new adapter_recyclerview(productlist, ProductoActivity.this);
+                    recyclerView.setAdapter(adapter);
+
+                    adapter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            setIdProducto = productlist.get(recyclerView.getChildAdapterPosition(view)).getId();
+                            setRutaImagen = productlist.get(recyclerView.getChildAdapterPosition(view)).getRuta_image();
+                            setNombre_pro = productlist.get(recyclerView.getChildAdapterPosition(view)).getNombre();
+                            setCantidad = 1;
+                            setprecio = productlist.get(recyclerView.getChildAdapterPosition(view)).getPrecio();
+                            setIngredients = productlist.get(recyclerView.getChildAdapterPosition(view)).getIngredients();
+                            setDescripcion = productlist.get(recyclerView.getChildAdapterPosition(view)).getDescription();
+                            int idMenu = productlist.get(recyclerView.getChildAdapterPosition(view)).getId();
+                            setIdMenu = idMenu;
+                            loadExtras(idMenu);
+                        }
+                    });
                 } catch (Exception e) {
                     DialogAlerta(ProductoActivity.this, "Error", e.getMessage());
                     dialog.dismiss();
                 }
                 dialog.dismiss();
-                p = new usu_producto();
             }
 
             @Override
@@ -218,6 +238,43 @@ public class ProductoActivity extends AppCompatActivity
         finish();
         startActivity(getIntent());
         super.onRestart();
+    }
+
+
+    private void loadExtras(int idMenu){
+        Call<List<ExtraOnline>> call = RetrofitCall.getApiService().getExtrasByIdMenu(idMenu);
+
+        call.enqueue(new Callback<List<ExtraOnline>>() {
+            @Override
+            public void onResponse(Call<List<ExtraOnline>> call, retrofit2.Response<List<ExtraOnline>> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Log.i("mydebug", "response body: " + response.body().toString());
+
+                if(response.body() == null){
+                    Log.i("mydebug", "detalle ventas es null");
+                    extras = new ArrayList<>();
+                    return;
+                }
+                extras = response.body();
+                List<ExtraOnline> allExtras = new ArrayList<>();
+                for(ExtraOnline extra: extras){
+                    extra.setSelected(true);
+                    allExtras.add(extra);
+                }
+                setExtras = allExtras;
+                new CuadroDialogoProProducto(context, ProductoActivity.this);
+            }
+
+            @Override
+            public void onFailure(Call<List<ExtraOnline>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

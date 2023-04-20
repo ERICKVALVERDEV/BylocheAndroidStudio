@@ -1,6 +1,8 @@
 package com.valverde.byloche.fragments.Online;
 
-public class MenuDetalle {
+import java.io.Serializable;
+
+public class MenuDetalle implements Serializable {
     private int IdMenuDetalle;
     private int IdMenu;
     private String Ingrediente;

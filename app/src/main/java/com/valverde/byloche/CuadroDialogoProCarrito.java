@@ -24,12 +24,17 @@ import com.valverde.byloche.SQLite.ConexionSQLiteHelper;
 import com.valverde.byloche.SQLite.Utilidades;
 import com.valverde.byloche.SQLite.cart.Cart;
 import com.valverde.byloche.SQLite.ingredient.Ingredient;
+import com.valverde.byloche.adaptadores.adapter_extras;
+import com.valverde.byloche.adaptadores.adapter_extras_cart;
 import com.valverde.byloche.adaptadores.adapter_ingredients;
 import com.valverde.byloche.adaptadores.adapter_ingredients_cart;
+import com.valverde.byloche.fragments.Online.ExtraOnline;
 import com.valverde.byloche.fragments.Online.MenuDetalle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CuadroDialogoProCarrito extends Dialog {
@@ -41,6 +46,8 @@ public class CuadroDialogoProCarrito extends Dialog {
     int valor;
     final EditText paso;
     public static Map<Ingredient,Boolean> ingredientsSelected;
+    public static Map<ExtraOnline,Boolean> extrasSelected;
+    EditText details;
 
     public  interface FinalizoDialogo {
         void ResultCuadroDialogo(String paso);
@@ -71,17 +78,28 @@ public class CuadroDialogoProCarrito extends Dialog {
         Button aceptar = dialogo.findViewById(R.id.btn_aceptar);
         ImageView cerrar = dialogo.findViewById(R.id.btn_cerrar);
         ImageView imgproduct = dialogo.findViewById(R.id.img_producto);
+        details = dialogo.findViewById(R.id.details);
+        details.setText(CarritoActivity.setDescripcion);
 
         ingredientsSelected = new HashMap<>();
         for(Ingredient ingredient: CarritoActivity.setIngredients){
             ingredientsSelected.put(ingredient, ingredient.isSelected());
             Log.i("mydebug", ingredient.toString());
         }
+        extrasSelected = new HashMap<>();
+        for(ExtraOnline extra: CarritoActivity.setExtras){
+            extrasSelected.put(extra, extra.isSelected());
+        }
 
         RecyclerView ingredientsRecycler = dialogo.findViewById(R.id.ingredientsRecycler);
         ingredientsRecycler.setLayoutManager(new LinearLayoutManager(context));
         adapter_ingredients_cart ingredientsAdapter = new adapter_ingredients_cart(CarritoActivity.setIngredients, context);
         ingredientsRecycler.setAdapter(ingredientsAdapter);
+
+        RecyclerView extrasRecycler = dialogo.findViewById(R.id.extrasRecycler);
+        extrasRecycler.setLayoutManager(new LinearLayoutManager(context));
+        adapter_extras_cart extrasAdapter = new adapter_extras_cart(CarritoActivity.setExtras, context);
+        extrasRecycler.setAdapter(extrasAdapter);
 
         String ip = context.getString(R.string.rutaImagenes);
         Picasso.get().load(ip+CarritoActivity.RutaImagen).into(imgproduct);
@@ -139,18 +157,28 @@ public class CuadroDialogoProCarrito extends Dialog {
 
     private void ModificarCant() {
         try {
+            Log.i("mydebug", "PRO CARRITO - setCurrentId: " + CarritoActivity.setCurrentOrderId);
+            Log.i("mydebug", "PRO CARRITO - setIdProducto: " + CarritoActivity.setIdProducto);
             con.updateCartProductQuantity(CarritoActivity.setCurrentOrderId, CarritoActivity.setIdProducto, paso.getText().toString());
-            Log.i("mydebug", "ingredientsSelected in dialogo: " + ingredientsSelected.toString());
             for(Ingredient ingredient: ingredientsSelected.keySet()){
-                // TODO use update method
-                Log.i("mydebug", String.valueOf(ingredient.getId()));
-                Log.i("mydebug", String.valueOf(ingredient.isSelected()));
-                Log.i("mydebug", String.valueOf(ingredientsSelected.get(ingredient)));
                 con.updateIngredientIsSelected(ingredient.getId(), ingredientsSelected.get(ingredient)? "1" : "0");
-                Log.i("mydebug", "ingredient updated: " + con.getIngredientsById(String.valueOf(ingredient.getId())).toString());
             }
+            List<String> extrasNamesUpdated = new ArrayList<>();
+            List<String> extrasPricesUpdated = new ArrayList<>();
+            for(ExtraOnline extra: extrasSelected.keySet()){
+                if(extrasSelected.get(extra)){
+                    extrasNamesUpdated.add(extra.getDescripcion());
+                    extrasPricesUpdated.add(String.valueOf(extra.getValor()));
+                }
+            }
+            Log.i("mydebug", "PRO CARRITO - extras: " + String.join("/",extrasNamesUpdated));
+            Log.i("mydebug", "PRO CARRITO - details: " + details.getText().toString());
+            con.updateCartExtras(CarritoActivity.setCurrentOrderId,CarritoActivity.setIdProducto, String.join("/",extrasNamesUpdated));
+            con.updateCartExtrasPrices(CarritoActivity.setCurrentOrderId,CarritoActivity.setIdProducto, String.join("/",extrasPricesUpdated));
+            con.updateCartDescripcion(CarritoActivity.setCurrentOrderId,CarritoActivity.setIdProducto, details.getText().toString());
         } catch (Exception ex) {
             Toast.makeText(CuadroDialogoProCarrito.super.getContext(), ex.toString(), Toast.LENGTH_SHORT).show();
+            Log.i("mydebug", "PRO CARRITO - error: " + ex.getMessage());
         }
     }
 

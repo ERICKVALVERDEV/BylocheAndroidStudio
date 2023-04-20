@@ -202,6 +202,7 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                 xml.append("<ImporteRecibido>0</ImporteRecibido>");
                 xml.append("<ImporteCambio>0</ImporteCambio>");
                 xml.append("<Estado>" + Estado.INGRESADO + "</Estado>");
+                xml.append("<IdMesa>" + CarritoActivity.currentTableId + "</IdMesa>");
                 xml.append("</CABECERA>");
                 xml.append("<DETALLE>");
                 int contador = 0;
@@ -217,6 +218,8 @@ public class Pedido_EnvioCocina_Activity extends AppCompatActivity {
                     xml.append("<PrecioUnidad>"+item.getProductPrice()+"</PrecioUnidad>");
                     xml.append("<PrecioTotal>"+precioTotal+"</PrecioTotal>");
                     xml.append("<Estado>" + Estado.INGRESADO + "</Estado>");
+                    xml.append("<Descripcion>" + item.getDescription() + "</Descripcion>");
+                    xml.append("<Extras>" + item.getExtras() + "</Extras>");
                     List<Ingredient> ingredients = con.getIngredientsByProductIdAndCartId(String.valueOf(item.getProductId()), String.valueOf(item.getId()));
                     for(Ingredient ingredient: ingredients){
                         if(ingredient.isSelected()){

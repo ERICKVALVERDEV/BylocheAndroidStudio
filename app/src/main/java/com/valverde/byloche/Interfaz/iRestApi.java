@@ -32,6 +32,9 @@ public interface iRestApi {
     @POST("/WebApiByloche/Menu/ObtenerPorCategoria")
     Call<List<MenuOnline>> meMenuId(@Query("IdCategoria") int IdCategoria);
 
+    @POST("/WebApiByloche/Menu/ObtenerPorId")
+    Call<MenuOnline> getMenuById(@Query("idMenu") int idMenu);
+
     @POST("/WebApiByloche/Extras/ObetenerExtrasPorIdMenu")
     Call<List<ExtraOnline>> getExtrasByIdMenu(@Query("idMenu") int idMenu);
 
@@ -50,6 +53,9 @@ public interface iRestApi {
     @POST("/WebApiByloche/Ventas/ObtenerVentasRestaurante")
     Call<List<VentasOnline>> getVentasByRestaurant(@Query("idRestaurante") int idRestaurant);
 
+    @POST("/WebApiByloche/Ventas/ObtenerVentasRestauranteUsuario")
+    Call<List<VentasOnline>> getVentasByRestaurantAndUser(@Query("idRestaurante") int idRestaurant, @Query("idUsuario") int idUsuario);
+
     @POST("/WebApiByloche/api/VentasDetalles")
     Call<List<VentasDetalleOnline>> getVentaDetallesByIdVenta(@Query("idVenta") int idVenta);
 
@@ -58,5 +64,8 @@ public interface iRestApi {
 
     @POST("/WebApiByloche/Ventas/ModificarVenta")
     Call<ResponseServer> actualizarPedido(@Body VentasOnline ventaActualizada, @Query("nombreUsuario") String nombreUsuario);
+
+    @POST("/WebApiByloche/Ventas/ActualizarIdUsuario")
+    Call<ResponseServer> actualizarUsuarioVenta(@Query("idUsuario") int idUsuario, @Query("idVenta") int idVenta);
 
 }

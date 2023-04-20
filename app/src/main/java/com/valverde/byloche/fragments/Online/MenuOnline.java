@@ -23,6 +23,8 @@ public class MenuOnline implements Serializable {
     private String UsuarioRegistro;
     private String FechaModificacion;
     private String UsuarioModificacion;
+    private String DescripcionDetallada;
+    private String Extras;
 
     public int getIdMenu() {
         return IdMenu;
@@ -166,6 +168,22 @@ public class MenuOnline implements Serializable {
 
     public void setUsuarioModificacion(String usuarioModificacion) {
         UsuarioModificacion = usuarioModificacion;
+    }
+
+    public String getDescripcionDetallada() {
+        return DescripcionDetallada;
+    }
+
+    public void setDescripcionDetallada(String descripcionDetallada) {
+        DescripcionDetallada = descripcionDetallada;
+    }
+
+    public String getExtras() {
+        return Extras;
+    }
+
+    public void setExtras(String extras) {
+        Extras = extras;
     }
 
     @Override

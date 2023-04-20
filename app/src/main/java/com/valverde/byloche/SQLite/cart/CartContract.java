@@ -15,6 +15,10 @@ public class CartContract {
         public static final String ESTADO_PRO = "estado_pro";
         public static final String DETALLES_PRO = "detalles_pro";
         public static final String ID_PEDIDO = "id_pedido";
+        public static final String DESCRIPCION = "descripcion";
+        public static final String EXTRAS = "extras";
+        public static final String ID_MENU = "id_menu";
+        public static final String EXTRAS_PRECIOS = "extras_precios";
 
         public static final String CREATE_TABLE_CART = "CREATE TABLE " + TABLE_NAME +
                 " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -27,6 +31,10 @@ public class CartContract {
                 RUTA_IMAGEN + " TEXT, " +
                 ESTADO_PRO + " TEXT, " +
                 DETALLES_PRO + " TEXT, " +
-                ID_PEDIDO + " INTEGER)";
+                ID_PEDIDO + " INTEGER, " +
+                DESCRIPCION + " TEXT, " +
+                EXTRAS + " TEXT, " +
+                ID_MENU + " INTEGER, " +
+                EXTRAS_PRECIOS + " TEXT)";
     }
 }

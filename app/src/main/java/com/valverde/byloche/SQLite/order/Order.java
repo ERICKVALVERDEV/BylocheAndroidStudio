@@ -6,6 +6,7 @@ public class Order {
     private long id;
     private String state;
     private String table;
+    private int tableId;
 
     public Order(){
 
@@ -40,10 +41,19 @@ public class Order {
         this.table = table;
     }
 
+    public int getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
+    }
+
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
         values.put(OrderContract.OrderEntry.STATE, state);
         values.put(OrderContract.OrderEntry.TABLE, table);
+        values.put(OrderContract.OrderEntry.TABLE_ID, tableId);
         return values;
     }
 }

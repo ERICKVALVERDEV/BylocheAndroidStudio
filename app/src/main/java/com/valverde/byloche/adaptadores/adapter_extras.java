@@ -10,40 +10,40 @@ import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.valverde.byloche.CuadroDialogoProCarritoOnline;
+import com.valverde.byloche.CuadroDialogoProProducto;
 import com.valverde.byloche.R;
 import com.valverde.byloche.fragments.Online.ExtraOnline;
 
 import java.util.List;
 
-public class adapter_extras_cart_online extends RecyclerView.Adapter<adapter_extras_cart_online.MyHolderView>{
+public class adapter_extras extends RecyclerView.Adapter<adapter_extras.MyHolderView>{
     private Context context;
     List<ExtraOnline> extrasList;
     private View.OnClickListener listener;
 
-    public adapter_extras_cart_online(List<ExtraOnline> extrasList, Context context){
+    public adapter_extras(List<ExtraOnline> extrasList, Context context){
         this.extrasList = extrasList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public adapter_extras_cart_online.MyHolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public adapter_extras.MyHolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.item_ingredient,parent,false);
-        return new adapter_extras_cart_online.MyHolderView(view);
+        return new adapter_extras.MyHolderView(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull adapter_extras_cart_online.MyHolderView holder, int position) {
+    public void onBindViewHolder(@NonNull adapter_extras.MyHolderView holder, int position) {
         String extraName = extrasList.get(position).getDescripcion();
         double extraPrice = extrasList.get(position).getValor();
         String extraText = context.getString(R.string.extra, extraName, extraPrice);
         holder.extra.setText(extraText);
         holder.extra.setChecked(extrasList.get(position).isSelected());
         holder.extra.setOnCheckedChangeListener((checkbox,isChecked) -> {
-            CuadroDialogoProCarritoOnline.extrasSelected.put(extrasList.get(position), isChecked);
-            Log.i("mydebug", "extrasSelected in adapter: " + CuadroDialogoProCarritoOnline.extrasSelected.toString());
+            CuadroDialogoProProducto.extrasSelected.put(extrasList.get(position), isChecked);
+            Log.i("mydebug", "extrasSelected in adapter: " + CuadroDialogoProProducto.extrasSelected.toString());
         });
     }
 

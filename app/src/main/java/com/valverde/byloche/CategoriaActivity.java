@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,9 @@ import com.valverde.byloche.Datos.usu_categoria;
 import com.valverde.byloche.adaptadores.adapter_categoria;
 import com.valverde.byloche.fragments.Online.CategoriaOnline;
 import com.valverde.byloche.fragments.Online.RetrofitCall;
+import com.valverde.byloche.fragments.Online.VentasDetalleOnline;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,8 @@ public class CategoriaActivity extends AppCompatActivity {
     JsonObjectRequest jsonObjectRequest;
     ProgressDialog dialog;
     int currentOrderId;
+    boolean isOnline;
+    List<VentasDetalleOnline> currentPlatesList;
 
     private ArrayList<usu_categoria> categoria_list;
 
@@ -50,16 +55,17 @@ public class CategoriaActivity extends AppCompatActivity {
         context= this;
 
         currentOrderId = getIntent().getIntExtra("orderId", -1);
+        isOnline = getIntent().getBooleanExtra("isOnline", false);
+        if(isOnline){
+            Bundle bundle = getIntent().getExtras();
+            currentPlatesList = (List<VentasDetalleOnline>)bundle.getSerializable("CURRENT_PLATES_LIST");
+            Log.i("mydebug", "CurrentOrderId: " + currentOrderId);
+            Log.i("mydebug", "IdOnline: " + isOnline);
+            Log.i("mydebug", "CurrentPlatesList recibido en CategoriaActivity: " + currentPlatesList.toString());
+        }
 
         TextView titleBar = findViewById(R.id.titleBarTitle);
         titleBar.setText("Pedidos");
-
-        //txt_paso = findViewById(R.id.txt_mostar);
-//        img_carrito = findViewById(R.id.img_carrito);
-//        dato = getIntent().getIntExtra("dato", 0);
-//        id_user = getIntent().getStringExtra("id_usuario");
-//        setIdUsuario = Integer.parseInt(id_user);
-//        setCategoria = dato;
 
         Thread tr = new Thread(){
             @Override
@@ -143,12 +149,19 @@ public class CategoriaActivity extends AppCompatActivity {
                         adapter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
                                 Intent intent = new Intent(context, ProductoActivity.class);
                                 intent.putExtra("currentOrderId", currentOrderId);
                                 intent.putExtra("dato",categoria_list.get(recyclerView.getChildAdapterPosition(view)).getId());
                                 String mostrar = String.valueOf(MainActivity.id_usuario);
                                 intent.putExtra("id_usuario", mostrar);
+
+                                if(isOnline){
+                                    intent.putExtra("isOnline", isOnline);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("CURRENT_PLATES_LIST", (Serializable) currentPlatesList);
+                                    intent.putExtras(bundle);
+                                }
+
                                 startActivity(intent);
                             }
                         });

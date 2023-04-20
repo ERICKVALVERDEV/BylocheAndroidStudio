@@ -1,6 +1,7 @@
 package com.valverde.byloche;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,9 +44,11 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,13 +61,14 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
     public static ArrayList<String> listaInformacion;
     public static List<VentasDetalleOnline> ventaDetallesOnlineList; // platos de la orden
 
-    static TextView totalPrice, titleBar;
+    static TextView totalPrice;
+    TextView addPlateButton, titleBar;
     Button btn_vaciar, btn_continuar, btnSaveLocal;
     LinearLayout linearLayoutVacio, linearLayoutlista;
     ImageView img_volver;
     int dato;
-    int currentOrderId;
-    String currentTable;
+    public static int currentOrderId, currentTableId;
+    public static String currentTable;
     public static double subtotal = 0, total = 0;
     public Context context;
     public static String RutaImagen, setNombre_pro;
@@ -71,10 +76,13 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
     public static int setIdProducto, setIdUsuario, setCantidad, setCategoria, setCurrentOrderId, setPlatePosition;
     public static List<VentaDetalleProductoOnline> setIngredients = new ArrayList<>();
     public static List<ExtraOnline> setExtras = new ArrayList<>();
+    public static String setDescripcion;
     public List<ExtraOnline> extras = new ArrayList<>();
 
     Spinner spinnerTables;
     ArrayAdapter<MesaOnline> adapterSpinnerTables;
+
+    boolean isOnlineAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +91,19 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
 
         context = this;
 
-        titleBar = findViewById(R.id.titleBarTitle);
-        titleBar.setText("Carrito");
-
         dato = getIntent().getIntExtra("categoria", 0);
         currentOrderId = getIntent().getIntExtra("currentOrderId",-2);
         currentTable = getIntent().getStringExtra("currentTable");
+        currentTableId = getIntent().getIntExtra("currentTableId", 1);
+        isOnlineAdded = getIntent().getBooleanExtra("isOnlineAdded", false);
 
         if(currentTable == null){
             currentTable = "Mesa #1";
         }
+
+        titleBar = findViewById(R.id.titleBarTitle);
+        String title = context.getString(R.string.orderTitle, currentOrderId);
+        titleBar.setText(title);
 
         btnSaveLocal = findViewById(R.id.btnSaveLocal);
         btn_vaciar = findViewById(R.id.btn_vaciar);
@@ -100,15 +111,39 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
         btn_continuar = findViewById(R.id.btn_continuar);
         totalPrice = findViewById(R.id.totalPrice);
         spinnerTables = findViewById(R.id.spinnerTables);
+        addPlateButton = findViewById(R.id.addPlateButton);
 
         btnSaveLocal.setVisibility(View.INVISIBLE);
         btn_vaciar.setVisibility(View.INVISIBLE);
 
+        addPlateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Usar startActivityForResult()
+                Intent intent = new Intent(getApplicationContext(), CategoriaActivity.class);
+                intent.putExtra("orderId", currentOrderId);
+                intent.putExtra("isOnline", true);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("CURRENT_PLATES_LIST", (Serializable) ventaDetallesOnlineList);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         ventaDetallesOnlineList = new ArrayList<>();
         create_recyler();
 
-
-        loadPlates();
+        if(isOnlineAdded){
+            Bundle bundle = getIntent().getExtras();
+            ventaDetallesOnlineList = (List<VentasDetalleOnline>)bundle.getSerializable("CURRENT_PLATES_LIST");
+            Log.i("mydebug", "Platos recibidos de vuelta en carritoOnline: " + ventaDetallesOnlineList.toString());
+            carroOnlineRecyclerAdapter = new adapter_recyclerCarroOnline(ventaDetallesOnlineList, CarritoOnlineActivity.this);
+            calculateTotal();
+            clickListView();
+            recyclerView.setAdapter(carroOnlineRecyclerAdapter);
+        }else{
+            loadPlates();
+        }
         loadTables();
 
         linearLayoutVacio = findViewById(R.id.linearLayout_vacio);
@@ -136,7 +171,7 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
                 //Le llamo total debido a este activity esta denominada con ese nombre
                 intent.putExtra("currentOrderId", currentOrderId);
                 intent.putExtra("currentOrderTotal", total);
-                // intent.putExtra("detallesVenta", ventaDetallesOnlineList);
+                intent.putExtra("currentTableId", currentTableId);
                 startActivity(intent);
 
                 //FORMATO PARA ESPECIFICAR LA FECHA
@@ -170,6 +205,7 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
                 setprecio = ventaDetallesOnlineList.get(position).getPrecioUnidad();
                 setCurrentOrderId = currentOrderId;
                 setPlatePosition = position;
+                setDescripcion = ventaDetallesOnlineList.get(position).getDescripcion();
 
                 loadIngredients(setPlatePosition);
                 loadExtras(setPlatePosition);
@@ -200,6 +236,7 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
         for(VentasDetalleOnline plato: ventaDetallesOnlineList){
             subtotal = plato.getCantidad() * plato.getPrecioUnidad();
             total += subtotal;
+            addExtrasTotal(plato.getIdMenu(), plato.getCantidad(), plato.getExtras());
         }
         totalPrice.setText("Total.................................." + total);
     }
@@ -242,11 +279,25 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
 
                 spinnerTables.setAdapter(adapterSpinnerTables);
                 spinnerTables.setSelection(tableNames.indexOf(currentTable));
+                spinnerTables.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        MesaOnline mesaOnline = (MesaOnline) parent.getSelectedItem();
+                        currentTableId = mesaOnline.getIdMesa();
+                        Log.i("mydebug", String.valueOf(currentTableId));
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<List<MesaOnline>> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.i("mydebug", "Failure: " + t.getStackTrace().toString());
+                t.printStackTrace();
             }
         });
     }
@@ -278,8 +329,9 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
 
             @Override
             public void onFailure(Call<List<VentasDetalleOnline>> call, Throwable t) {
-                t.printStackTrace();
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.i("mydebug", "Failure: " + t.getStackTrace().toString());
+                t.printStackTrace();
             }
         });
     }
@@ -288,12 +340,13 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
         List<VentaDetalleProductoOnline> allIngredients = new ArrayList<>();
         List<MenuDetalle> menuIngredients = ventaDetallesOnlineList.get(position).getMenu().getDetalleMenu();
         List<VentaDetalleProductoOnline> ingredientsSelected = ventaDetallesOnlineList.get(position).getDetalleProductosVenta();
-        // TODO: Complete logic to create an igredients array with all the ingredients and the isSelected attribute
+        Log.i("mydebug", "loadIngredients: " + ingredientsSelected.toString());
         for(MenuDetalle menuDetalle: menuIngredients){
             int index = containsIdProduct(ingredientsSelected, menuDetalle.getIdProducto());
             if(index != -1){
                 VentaDetalleProductoOnline ing = ingredientsSelected.get(index);
                 ing.setSelected(ventaDetallesOnlineList.get(position).getDetalleProductosVenta().get(index).isSelected());
+                // ing.setActivo(ventaDetallesOnlineList.get(position).getDetalleProductosVenta().get(index).isSelected());
                 allIngredients.add(ing);
             }else{
                 VentaDetalleProductoOnline ing = new VentaDetalleProductoOnline();
@@ -303,11 +356,14 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
                 ing.setNombreProducto(menuDetalle.getIngrediente());
                 ing.setCantidad(menuDetalle.getCantidad());
                 ing.setUnidadMedida(menuDetalle.getUnidadMedida());
-                ing.setActivo(menuDetalle.isActivo());
+                ing.setActivo(false);
                 ing.setSelected(false);
                 ing.setPrice(menuDetalle.getPrecio());
                 allIngredients.add(ing);
             }
+        }
+        for(int i = 0; i < allIngredients.size(); i++){
+            allIngredients.get(i).setSelected(allIngredients.get(i).isActivo());
         }
         setIngredients = allIngredients;
         Log.i("mydebug", setIngredients.toString());
@@ -325,11 +381,11 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
                 }
 
                 Log.i("mydebug", "response body: " + response.body().toString());
-                extras = response.body();
-                if(extras == null){
+                if(response.body() == null){
                     Log.i("mydebug", "detalle ventas es null");
                     return;
                 }
+                extras = response.body();
                 loadExtrasSelected(position);
                 new CuadroDialogoProCarritoOnline(context, CarritoOnlineActivity.this);
             }
@@ -338,26 +394,23 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
             public void onFailure(Call<List<ExtraOnline>> call, Throwable t) {
                 t.printStackTrace();
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.i("mydebug", "Failure: " + t.getStackTrace().toString());
+                t.printStackTrace();
             }
         });
     }
 
     private void loadExtrasSelected(int position){
         List<ExtraOnline> allExtras = new ArrayList<>();
-        String[] extrasNames = ventaDetallesOnlineList.get(position).getExtras().split(";");
-        // TODO: Complete logic to create an igredients array with all the ingredients and the isSelected attribute
+        String[] extrasNames = ventaDetallesOnlineList.get(position).getExtras().split("/");
+        Log.i("mydebug", "extrasNames CarritoOnline: " + Arrays.toString(extrasNames));
         for(ExtraOnline extra: extras){
             int index = containsExtraName(extrasNames, extra.getDescripcion());
-            if(index != -1){
-                extra.setSelected(true);
-                allExtras.add(extra);
-            }else{
-                extra.setSelected(false);
-                allExtras.add(extra);
-            }
+            extra.setSelected(index != -1);
+            allExtras.add(extra);
         }
         setExtras = allExtras;
-        Log.i("mydebug", setExtras.toString());
+        Log.i("mydebug", "setExtras CarritoOnline: " + setExtras.toString());
     }
 
     public static int containsIdProduct(List<VentaDetalleProductoOnline> c, int idProduct) {
@@ -376,6 +429,35 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
             }
         }
         return -1;
+    }
+
+    private static void addExtrasTotal(int idMenu, int quantity, String extrasSelected){
+        Call<List<ExtraOnline>> call = RetrofitCall.getApiService().getExtrasByIdMenu(idMenu);
+        call.enqueue(new Callback<List<ExtraOnline>>() {
+            @Override
+            public void onResponse(Call<List<ExtraOnline>> call, retrofit2.Response<List<ExtraOnline>> response) {
+                if(!response.isSuccessful()){
+                    return;
+                }
+
+                if(response.body() == null){
+                    return;
+                }
+
+                List<ExtraOnline> extras = response.body();
+                List<String> extrasNames = Arrays.asList(extrasSelected.split("/"));
+                for(ExtraOnline extra: extras){
+                    if(extrasNames.contains(extra.getDescripcion())){
+                        total += extra.getValor() * quantity;
+                    }
+                }
+                totalPrice.setText("Total.................................." + total);
+            }
+            @Override
+            public void onFailure(Call<List<ExtraOnline>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
 }

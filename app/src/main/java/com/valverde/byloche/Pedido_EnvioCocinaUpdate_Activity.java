@@ -39,6 +39,7 @@ import com.valverde.byloche.fragments.Online.Estado;
 import com.valverde.byloche.fragments.Online.ResponseServer;
 import com.valverde.byloche.fragments.Online.RetrofitCall;
 import com.valverde.byloche.fragments.Online.TipoDocumentoCliente;
+import com.valverde.byloche.fragments.Online.VentaDetalleProductoOnline;
 import com.valverde.byloche.fragments.Online.VentasDetalleOnline;
 import com.valverde.byloche.fragments.Online.VentasOnline;
 
@@ -66,6 +67,7 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
     ClientesOnline cliente;
 
     int currentOrderId;
+    int currentTableId;
     double currentOrderTotal;
 
 
@@ -81,6 +83,7 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
 
         currentOrderId = getIntent().getIntExtra("currentOrderId", -2);
         currentOrderTotal = getIntent().getDoubleExtra("currentOrderTotal", -2);
+        currentTableId = getIntent().getIntExtra("currentTableId", 1);
         // detallesVenta = (List<VentasDetalleOnline>) getIntent().getSerializableExtra("detallesVenta");
         detallesVenta = CarritoOnlineActivity.ventaDetallesOnlineList;
 
@@ -204,7 +207,17 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
                 ventaActualizada.setActivo(true);
                 ventaActualizada.setDetalleVenta((ArrayList<VentasDetalleOnline>) detallesVenta);
                 ventaActualizada.setCliente(clienteActualizado);
+                ventaActualizada.setIdMesa(currentTableId);
 
+
+                for(VentasDetalleOnline plato: ventaActualizada.getDetalleVenta()){
+                    List<VentaDetalleProductoOnline> ingredientesSeleccionados = new ArrayList<>();
+                    for(VentaDetalleProductoOnline ingrediente: plato.getDetalleProductosVenta()){
+                        ingrediente.setActivo(ingrediente.isSelected());
+                        ingredientesSeleccionados.add(ingrediente);
+                    }
+                    plato.setDetalleProductosVenta(ingredientesSeleccionados);
+                }
                 Log.i("mydebug", ventaActualizada.toString());
                 DialogAlerta(Pedido_EnvioCocinaUpdate_Activity.this,"Venta Actualizada",ventaActualizada.toString());
 
@@ -254,7 +267,7 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
 
     private void updateOrder(VentasOnline ventaActualizada, String nombreUsuario){
         try {
-
+            Log.i("mydebug", "Update venta: " + ventaActualizada.toString());
             Call<ResponseServer> call = RetrofitCall.getApiService().actualizarPedido(ventaActualizada, nombreUsuario);
             call.enqueue(new Callback<ResponseServer>() {
                 @Override
@@ -263,6 +276,7 @@ public class Pedido_EnvioCocinaUpdate_Activity extends AppCompatActivity {
                         DialogAlerta(Pedido_EnvioCocinaUpdate_Activity.this,"Alerta",response.toString());
                         return;
                     }
+                    Log.i("mydebug", "Update response: " + response.toString());
                     DialogAlerta(Pedido_EnvioCocinaUpdate_Activity.this,"Estado",response.body().getMensaje());
                     Intent intent = new Intent(Pedido_EnvioCocinaUpdate_Activity.this, MainActivity.class);
                     intent.putExtra("fragmentToLoad","pedidos");

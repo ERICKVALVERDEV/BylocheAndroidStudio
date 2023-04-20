@@ -64,4 +64,17 @@ public class ExtraOnline {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    @Override
+    public String toString() {
+        return "ExtraOnline{" +
+                "IdExtra=" + IdExtra +
+                ", IdMenu=" + IdMenu +
+                ", Descripcion='" + Descripcion + '\'' +
+                ", Valor=" + Valor +
+                ", IdRestaurante=" + IdRestaurante +
+                ", Activo=" + Activo +
+                ", isSelected=" + isSelected +
+                '}';
+    }
 }

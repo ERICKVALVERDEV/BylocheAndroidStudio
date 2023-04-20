@@ -211,7 +211,9 @@
     <string name="price">$%1$s</string>
     <string name="quantity">Cantidad: %1$s</string>
     <string name="orderTitle">Pedido #%1$d</string>
+    <string name="orderTitleLocal">Pedido #%1$d - Local</string>
     <string name="orderState">Estado: %1$s</string>
     <string name="ingredient">%1$s %2$.2f %3$s $%4$.2f</string>
+    <string name="extra">%1$s $%2$.2f</string>
 
 </resources>

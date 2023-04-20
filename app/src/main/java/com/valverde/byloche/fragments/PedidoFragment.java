@@ -141,7 +141,7 @@ public class PedidoFragment extends Fragment {
 
     private void loadWebOrders(){
 
-     Call<List<VentasOnline>> call = RetrofitCall.getApiService().getVentasByRestaurant(MainActivity.id_restaurante);
+     Call<List<VentasOnline>> call = RetrofitCall.getApiService().getVentasByRestaurantAndUser(MainActivity.id_restaurante, MainActivity.id_usuario);
 
      call.enqueue(new Callback<List<VentasOnline>>() {
          @Override

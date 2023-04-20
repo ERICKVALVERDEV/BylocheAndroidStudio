@@ -35,6 +35,7 @@ public class CuadroDialogoProCarritoOnline extends Dialog {
     final EditText paso;
     public static Map<VentaDetalleProductoOnline,Boolean> ingredientsSelected;
     public static Map<ExtraOnline,Boolean> extrasSelected;
+    EditText details;
 
     public  interface FinalizoDialogo {
         void ResultCuadroDialogo(String paso);
@@ -64,7 +65,8 @@ public class CuadroDialogoProCarritoOnline extends Dialog {
         Button aceptar = dialogo.findViewById(R.id.btn_aceptar);
         ImageView cerrar = dialogo.findViewById(R.id.btn_cerrar);
         ImageView imgproduct = dialogo.findViewById(R.id.img_producto);
-        EditText details = dialogo.findViewById(R.id.details);
+        details = dialogo.findViewById(R.id.details);
+        details.setText(CarritoOnlineActivity.setDescripcion);
 
         ingredientsSelected = new HashMap<>();
         for(VentaDetalleProductoOnline ingredient: CarritoOnlineActivity.setIngredients){
@@ -145,18 +147,29 @@ public class CuadroDialogoProCarritoOnline extends Dialog {
     private void ModificarCant() {
         try {
             CarritoOnlineActivity.ventaDetallesOnlineList.get(CarritoOnlineActivity.setPlatePosition).setCantidad(Integer.parseInt(paso.getText().toString()));
-
+            CarritoOnlineActivity.ventaDetallesOnlineList.get(CarritoOnlineActivity.setPlatePosition).setDescripcion(details.getText().toString());
+            List<String> extrasSelectedNames = new ArrayList<>();
+            for (ExtraOnline extra:extrasSelected.keySet()) {
+                if(extrasSelected.get(extra)){
+                    extrasSelectedNames.add(extra.getDescripcion());
+                }
+            }
+            CarritoOnlineActivity.ventaDetallesOnlineList.get(CarritoOnlineActivity.setPlatePosition).setExtras(String.join("/", extrasSelectedNames));
             int index = 0;
             List<VentaDetalleProductoOnline> ingredients = CarritoOnlineActivity.ventaDetallesOnlineList.get(CarritoOnlineActivity.setPlatePosition).getDetalleProductosVenta();
             for(VentaDetalleProductoOnline ingredient: ingredientsSelected.keySet()){
                 Log.i("mydebug", "ing map: " + ingredientsSelected);
                 Log.i("mydebug", "ing tested: " + ingredient);
                     index = ingredients.indexOf(ingredient);
+                    boolean currentIsSelected = ingredientsSelected.get(ingredient);
                     if(index != -1){
                         Log.i("mydebug", "ing in reference: " + ingredients.get(index).toString());
-                        ingredients.get(index).setSelected(ingredientsSelected.get(ingredient));
+                        ingredients.get(index).setSelected(currentIsSelected);
+                        ingredients.get(index).setActivo(currentIsSelected);
+                        ingredient.setActivo(currentIsSelected);
                     }else{
-                        ingredient.setSelected(ingredientsSelected.get(ingredient));
+                        ingredient.setSelected(currentIsSelected);
+                        ingredient.setActivo(currentIsSelected);
                         ingredients.add(ingredient);
                         Log.i("mydebug", "ing added: " + ingredient.toString());
                     }

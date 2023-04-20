@@ -50,6 +50,7 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
             order.setId(cursor.getInt(0));
             order.setState(cursor.getString(1));
             order.setTable(cursor.getString(2));
+            order.setTableId(cursor.getInt(3));
             orders.add(order);
         }
         return orders;
@@ -70,6 +71,10 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
             cart.setProductState(cursor.getString(8));
             cart.setProductDetails(cursor.getString(9));
             cart.setOrderId(cursor.getInt(10));
+            cart.setDescription(cursor.getString(11));
+            cart.setExtras(cursor.getString(12));
+            cart.setIdMenu(cursor.getInt(13));
+            cart.setExtrasPrices(cursor.getString(14));
             carts.add(cart);
         }
         return carts;
@@ -265,6 +270,36 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
     public void updateCartProductQuantity(long orderId, int productId, String newQuantity){
         String query = "UPDATE " + CartEntry.TABLE_NAME +
                 " SET " + CartEntry.CANTIDAD_PRO + " = " + newQuantity +
+                " WHERE " +
+                CartEntry.ID_PRODUCTO + " = " + productId +
+                " AND " +
+                CartEntry.ID_PEDIDO + " = " + orderId;
+        getWritableDatabase().execSQL(query);
+    }
+
+    public void updateCartExtras(long orderId, int productId, String newExtras){
+        String query = "UPDATE " + CartEntry.TABLE_NAME +
+                " SET " + CartEntry.EXTRAS + " = " + "'" + newExtras + "'" +
+                " WHERE " +
+                CartEntry.ID_PRODUCTO + " = " + productId +
+                " AND " +
+                CartEntry.ID_PEDIDO + " = " + orderId;
+        getWritableDatabase().execSQL(query);
+    }
+
+    public void updateCartExtrasPrices(long orderId, int productId, String newExtrasPrices){
+        String query = "UPDATE " + CartEntry.TABLE_NAME +
+                " SET " + CartEntry.EXTRAS_PRECIOS + " = " + "'" + newExtrasPrices + "'" +
+                " WHERE " +
+                CartEntry.ID_PRODUCTO + " = " + productId +
+                " AND " +
+                CartEntry.ID_PEDIDO + " = " + orderId;
+        getWritableDatabase().execSQL(query);
+    }
+
+    public void updateCartDescripcion(long orderId, int productId, String newDescripcion){
+        String query = "UPDATE " + CartEntry.TABLE_NAME +
+                " SET " + CartEntry.DESCRIPCION + " = " + "'" + newDescripcion + "'" +
                 " WHERE " +
                 CartEntry.ID_PRODUCTO + " = " + productId +
                 " AND " +
