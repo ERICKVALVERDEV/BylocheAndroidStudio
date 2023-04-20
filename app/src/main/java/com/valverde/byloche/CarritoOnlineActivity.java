@@ -340,7 +340,8 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
         List<VentaDetalleProductoOnline> allIngredients = new ArrayList<>();
         List<MenuDetalle> menuIngredients = ventaDetallesOnlineList.get(position).getMenu().getDetalleMenu();
         List<VentaDetalleProductoOnline> ingredientsSelected = ventaDetallesOnlineList.get(position).getDetalleProductosVenta();
-        Log.i("mydebug", "loadIngredients: " + ingredientsSelected.toString());
+        Log.i("mydebug", "loadIngredients in position (" + position + "): " + ingredientsSelected.toString());
+        Log.i("mydebug", "menuIngredients in position (" + position + "): " + menuIngredients.toString());
         for(MenuDetalle menuDetalle: menuIngredients){
             int index = containsIdProduct(ingredientsSelected, menuDetalle.getIdProducto());
             if(index != -1){
@@ -366,7 +367,7 @@ public class CarritoOnlineActivity extends AppCompatActivity implements CuadroDi
             allIngredients.get(i).setSelected(allIngredients.get(i).isActivo());
         }
         setIngredients = allIngredients;
-        Log.i("mydebug", setIngredients.toString());
+        Log.i("mydebug", "setIngredients in position (" + position + "): " + setIngredients.toString());
     }
 
     private void loadExtras(int position){

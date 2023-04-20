@@ -310,7 +310,7 @@ public class CuadroDialogoProProducto extends Dialog {
             newIngredient.setPrice(menuDetalle.getPrecio());
             newIngredient.setIdDetalleVenta(0);
             newIngredient.setUnidadMedida(menuDetalle.getUnidadMedida());
-            newIngredient.setIdProducto(ProductoActivity.setIdProducto);
+            newIngredient.setIdProducto(menuDetalle.getIdProducto());
             newIngredient.setIdVentaDetalleProducto(0);
             newIngredient.setSelected(ingredientsSelected.get(menuDetalle));
             newIngredientsList.add(newIngredient);
